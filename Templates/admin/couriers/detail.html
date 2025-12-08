@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ courier.full_name }} - Sea FoodISH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Courier Profile Card */
+        .profile-section {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 48px;
+            margin: 0 auto 20px;
+        }
+
+        .profile-card h2 {
+            font-size: 24px;
+            color: #1a202c;
+            margin-bottom: 4px;
+        }
+
+        .profile-card .username {
+            color: #718096;
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            text-align: left;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f7fafc;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item i {
+            width: 24px;
+            color: #667eea;
+        }
+
+        .info-item .label {
+            font-size: 13px;
+            color: #718096;
+            flex: 1;
+        }
+
+        .info-item .value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 16px;
+        }
+
+        .status-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-pending {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-inactive {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .status-blocked {
+            background: #feb2b2;
+            color: #742a2a;
+        }
+
+        .status-actions {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .status-actions select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--color);
+        }
+
+        .stat-box h3 {
+            font-size: 13px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .stat-box .value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--color);
+        }
+
+        .stat-box .subtitle {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 8px;
+        }
+
+        /* Charts & Tables */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f7fafc;
+        }
+
+        .card-header h3 {
+            font-size: 18px;
+            color: #1a202c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Monthly Stats */
+        .monthly-stats {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+
+        .month-stat {
+            text-align: center;
+            padding: 16px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .month-stat .month {
+            font-size: 12px;
+            color: #718096;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .month-stat .count {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .month-stat .earnings {
+            font-size: 11px;
+            color: #48bb78;
+            margin-top: 4px;
+        }
+
+        /* Orders Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f7fafc;
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .order-id {
+            font-family: monospace;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-delivered {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-confirmed, .status-preparing, .status-delivering {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .status-cancelled {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #a0aec0;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 1024px) {
+            .profile-section {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .monthly-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .monthly-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{% url 'courier_list' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Orqaga
+            </a>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    {{ courier.first_name|first }}{{ courier.last_name|first }}
+                </div>
+                <h2>{{ courier.full_name }}</h2>
+                <p class="username">@{{ courier.telegram_username|default:"telegram" }}</p>
+                
+                <span class="status-badge status-{{ courier.status }}">
+                    {{ courier.get_status_display }}
+                </span>
+
+                <div class="profile-info">
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <span class="label">Telefon:</span>
+                        <span class="value">{{ courier.phone }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span class="label">Viloyat:</span>
+                        <span class="value">{{ courier.get_region_display }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar"></i>
+                        <span class="label">Qo'shilgan:</span>
+                        <span class="value">{{ courier.created_at|date:"d.m.Y" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-telegram"></i>
+                        <span class="label">Telegram ID:</span>
+                        <span class="value">{{ courier.telegram_id }}</span>
+                    </div>
+                </div>
+
+                <div class="status-actions">
+                    <form method="post" action="{% url 'courier_update_status' courier.id %}">
+                        {% csrf_token %}
+                        <label style="font-size: 13px; color: #718096; display: block; margin-bottom: 8px;">
+                            Holatni o'zgartirish:
+                        </label>
+                        <select name="status" required>
+                            {% for value, label in courier.STATUS_CHOICES %}
+                            <option value="{{ value }}" {% if value == courier.status %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Saqlash
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-box" style="--color: #48bb78;">
+                    <h3>Jami buyurtmalar</h3>
+                    <div class="value">{{ stats.total_orders }}</div>
+                    <div class="subtitle">Barcha buyurtmalar</div>
+                </div>
+                <div class="stat-box" style="--color: #4299e1;">
+                    <h3>Bajarilgan</h3>
+                    <div class="value">{{ stats.completed }}</div>
+                    <div class="subtitle">{{ courier.success_rate }}% muvaffaqiyat</div>
+                </div>
+                <div class="stat-box" style="--color: #ed8936;">
+                    <h3>Jarayonda</h3>
+                    <div class="value">{{ stats.in_progress }}</div>
+                    <div class="subtitle">Hozirgi buyurtmalar</div>
+                </div>
+                <div class="stat-box" style="--color: #f56565;">
+                    <h3>Bekor qilingan</h3>
+                    <div class="value">{{ stats.cancelled }}</div>
+                    <div class="subtitle">{{ courier.cancelled_orders }} ta</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Monthly Statistics -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        <i class="fas fa-chart-line"></i>
+                        Oylik statistika
+                    </h3>
+                </div>
+                <div class="monthly-stats">
+                    {% for month in monthly_stats %}
+                    <div class="month-stat">
+                        <div class="month">{{ month.month }}</div>
+                        <div class="count">{{ month.completed }}</div>
+                        <div class="earnings">{{ month.earnings|floatformat:0 }} so'm</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        <i class="fas fa-box"></i>
+                        So'nggi buyurtmalar
+                    </h3>
+                </div>
+                {% if recent_orders %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mijoz</th>
+                            <th>Manzil</th>
+                            <th>Summa</th>
+                            <th>Holat</th>
+                            <th>Sana</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td><span class="order-id">#{{ order.order_id }}</span></td>
+                            <td>
+                                <div>
+                                    <strong>{{ order.full_name }}</strong><br>
+                                    <span style="font-size: 12px; color: #718096;">{{ order.phone }}</span>
+                                </div>
+                            </td>
+                            <td>{{ order.address|truncatewords:5 }}</td>
+                            <td style="font-weight: 600;">{{ order.total_price|floatformat:0 }} so'm</td>
+                            <td>
+                                <span class="order-status status-{{ order.status }}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-box-open"></i>
+                    <p>Hozircha buyurtmalar yo'q</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

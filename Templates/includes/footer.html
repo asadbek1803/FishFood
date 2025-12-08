@@ -1,0 +1,49 @@
+{% load static %}
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h4><i class="fas fa-fish"></i> {% if site_settings and site_settings.title %} {{site_settings.title}} {% else %} BaliqOvqatiUz {% endif %}</h4>
+                <p>{% if site_settings and site_settings.description %} {{site_settings.description}} {% else %} Eng sifatli dengiz mahsulotlari yetkazib beruvchisi {% endif %}</p>
+                <div class="social-links">
+                    <a href="{% if site_settings and site_settings.facebook_url %} {{site_settings.facebook_url}} {% endif %}"><i class="fab fa-facebook"></i></a>
+                    <a href="{% if site_settings and site_settings.instagram_url %} {{site_settings.instagram_url}} {% endif %}"><i class="fab fa-instagram"></i></a>
+                    <a href="{% if site_settings and site_settings.telegram_url %} {{site_settings.telegram_url}} {% endif %}"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Havolalar</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}">Asosiy</a></li>
+                    <li><a href="{% url 'home' %}#services">Xizmatlar</a></li>
+                    <li><a href="{% url 'shop' %}">Do'kon</a></li>
+                    <li><a href="{% url 'about'%}">Biz Haqimizda</a></li>
+                    <li><a href="{% if site_settings and site_settings.telegram_url %} {{site_settings.telegram_url}} {% else %} # {% endif %}">Aloqa</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Aloqa</h5>
+                <ul class="contact-info">
+                    <li><i class="fas fa-phone"></i> {% if site_settings and site_settings.phone_number %} {{site_settings.phone_number}} {% endif %}</li>
+                    <li><i class="fas fa-envelope"></i> {% if site_settings and site_settings.email %} {{site_settings.email}} {% endif %}</li>
+                    <li><i class="fas fa-map-marker-alt"></i> {% if site_settings and site_settings.address %} {{site_settings.address}} {% endif %}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 {% if site_settings and site_settings.title %} {{site_settings.title}} {% else %} Baliq OvqatlariUz {% endif %}. Barcha huquqlar himoyalangan.</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- Scroll to top button -->
+    <div class="scroll-top-btn">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>

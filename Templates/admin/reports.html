@@ -1,0 +1,29 @@
+{% extends "unfold/layouts/base.html" %}
+
+{% block content %}
+<div class="reports-page">
+    <h1>📋 Reports</h1>
+    
+    <div class="report-tabs">
+        <a href="?type=sales" class="tab {% if report_type == 'sales' %}active{% endif %}">
+            Sales Report
+        </a>
+        <a href="?type=daily" class="tab {% if report_type == 'daily' %}active{% endif %}">
+            Daily Report
+        </a>
+        <a href="?type=monthly" class="tab {% if report_type == 'monthly' %}active{% endif %}">
+            Monthly Report
+        </a>
+        <a href="?type=products" class="tab {% if report_type == 'products' %}active{% endif %}">
+            Product Report
+        </a>
+        <a href="?type=regions" class="tab {% if report_type == 'regions' %}active{% endif %}">
+            Region Report
+        </a>
+    </div>
+    
+    <div class="report-content">
+        <!-- Report content will be generated here -->
+    </div>
+</div>
+{% endblock %}

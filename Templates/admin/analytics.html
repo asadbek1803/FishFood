@@ -1,0 +1,26 @@
+{% extends "unfold/layouts/base.html" %}
+
+{% block content %}
+<div class="analytics-page">
+    <h1>📈 Analytics</h1>
+    
+    <div class="analytics-grid">
+        <div class="metric-card">
+            <h3>Conversion Rate</h3>
+            <div class="metric-value">{{ conversion_rate }}%</div>
+        </div>
+        
+        <div class="metric-card">
+            <h3>Avg Customer Value</h3>
+            <div class="metric-value">${{ avg_clv|floatformat:2 }}</div>
+        </div>
+        
+        <div class="metric-card">
+            <h3>Repeat Customers</h3>
+            <div class="metric-value">{{ repeat_customers }}</div>
+        </div>
+    </div>
+    
+    <!-- Additional analytics charts -->
+</div>
+{% endblock %}

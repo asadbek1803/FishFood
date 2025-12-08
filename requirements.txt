@@ -1,0 +1,4 @@
+django
+pillow
+django-unfold
+python-telegram-bot
