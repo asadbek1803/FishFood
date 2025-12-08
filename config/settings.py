@@ -27,12 +27,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', '/your-default-secret-key/')
 DEBUG = True
 SIGNAL_HANDLERS = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["lajvar.uz", "www.lajvar.uz", "localhost", ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.ngrok-free.app",
-    "https://*.ngrok.app",
-]
+
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False  # Better to explicitly whitelist
@@ -40,16 +37,24 @@ CORS_REPLACE_HTTPS_REFERER = True
 
 # Update these lists
 CORS_ORIGIN_WHITELIST = [
-    "https://cdcd1a4c3642.ngrok-free.app",
+    "https://www.lajvar.uz",
+    "http://www.lajvar.uz",
     "http://localhost:8000",
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000",
+    "https://lajvar.uz",
+    "http://lajvar.uz",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://cdcd1a4c3642.ngrok-free.app",
+    "https://www.lajvar.uz",
+    "http://www.lajvar.uz",
     "http://localhost:8000",
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000",
+    "https://lajvar.uz",
+    "http://lajvar.uz",
 ]
+
+
 
 # Set CSRF cookie domain (use None for local development)
 CSRF_COOKIE_DOMAIN = None  # Or ".ngrok-free.app" if using ngrok in production

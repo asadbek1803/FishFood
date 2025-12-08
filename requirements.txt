@@ -1,4 +1,7 @@
 django
 pillow
 django-unfold
-python-telegram-bot
+aiogram
+psycopg2-binary
+python-dotenv
+django-cors-headers
