@@ -696,6 +696,19 @@ async def notify_couriers_about_order(order):
     logger.info(f"📍 Region: '{order.region}' → '{region_code}'")
 
     try:
+        # Mahsulotlarni olish
+        order_items = await sync_to_async(list)(
+            order.items.select_related('product').all()
+        )
+        
+        # Mahsulotlar ro'yxatini tayyorlash
+        products_text = ""
+        for item in order_items:
+            products_text += f"  • {item.product.name} - {item.quantity} {item.product.unit} x {item.price:,} so'm\n"
+        
+        if not products_text:
+            products_text = "  • Ma'lumot yo'q\n"
+
         # Kuryerlarni topish
         couriers = await sync_to_async(list)(
             Courier.objects.filter(
@@ -717,8 +730,9 @@ async def notify_couriers_about_order(order):
             f"🆔 ID: <code>{order.order_id}</code>\n"
             f"👤 Mijoz: <b>{order.full_name}</b>\n"
             f"📱 Telefon: <a href='tel:{order.phone}'>{order.phone}</a>\n"
-            f"📍 Manzil: {order.address}\n"
-            f"💰 Summa: {order.total_price:,} so'm\n"
+            f"📍 Manzil: {order.address}\n\n"
+            f"🛒 <b>Mahsulotlar:</b>\n{products_text}\n"
+            f"💰 <b>Jami:</b> {order.total_price:,} so'm\n"
             f"💳 To'lov: {order.get_payment_method_display()}"
         )
 
