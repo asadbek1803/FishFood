@@ -23,8 +23,8 @@ make_unpublished.short_description = "Tanlanganlarni faolsizlashtirish"
 @admin.register(HomeSlider)
 class HomeSliderAdmin(UnfoldModelAdmin):
     # List display settings - Modeldagi field nomlarini ishlating
-    list_display = ('title', 'display_media_preview', 'slider_type', 'order', 'is_active', 'created_at')
-    list_display_links = ('title', 'display_media_preview')
+    list_display = ('title',  'slider_type', 'order', 'is_active', 'created_at')
+    list_display_links = ('title', )
     list_editable = ('order', 'is_active')
     list_filter = ('is_active', 'slider_type', 'created_at')
     search_fields = ('title', 'description', 'button_text')
