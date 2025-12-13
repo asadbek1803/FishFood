@@ -15,7 +15,12 @@
 <nav class="navbar navbar-expand-lg sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">
-            <i class="fas fa-fish"></i>{% if site_settings and site_settings.title %} {{site_settings.title}} {% else %} BaliqOvqatiUz {% endif %}
+            {% if site_settings and site_settings.logo %}
+            <img src="{{ site_settings.logo.url }}" alt="Logo" />
+            {% else %}
+                <i class="fas fa-fish"></i>
+            {% endif %}
+            {% if site_settings and site_settings.title %} {{site_settings.title}} {% else %} BaliqOvqatiUz {% endif %}
         </a>
         <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
