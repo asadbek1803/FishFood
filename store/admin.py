@@ -66,23 +66,21 @@ class ProductAdmin(UnfoldModelAdmin):
     )
     
     def display_image(self, obj):
-        if obj.image == None:
+        if not obj.image:
             return format_html(
-                '<div style="width:50px;height:50px;background:#2C2940;border-radius:5px;display:flex;align-items:center;justify-content:center;">'
+                '{}',
+                '<div style="width:50px;height:50px;background:#2C2940;border-radius:5px;'
+                'display:flex;align-items:center;justify-content:center;">'
                 '<i class="fas fa-fish" style="color:#60D5F4;"></i>'
                 '</div>'
-            ) 
-        if obj.image:
-            return format_html(
-                '<img src="{}" width="50" height="50" style="border-radius:5px;object-fit:cover;" />',
-                obj.image.url
             )
+
         return format_html(
-            '<div style="width:50px;height:50px;background:#2C2940;border-radius:5px;display:flex;align-items:center;justify-content:center;">'
-            '<i class="fas fa-fish" style="color:#60D5F4;"></i>'
-            '</div>'
+            '<img src="{}" width="50" height="50" style="border-radius:5px;object-fit:cover;" />',
+            obj.image.url
         )
     display_image.short_description = 'Rasm'
+
     
     def display_price(self, obj):
         # Decimalni int ga o'tkazish
