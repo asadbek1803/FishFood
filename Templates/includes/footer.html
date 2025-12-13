@@ -5,12 +5,20 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4 mb-4">
-            <h4>{% if site_settings and site_settings.logo %}
-            <img src="{{ site_settings.logo.url }}" alt="Logo" />
-            {% else %}
-            <i class="fas fa-fish"></i>
-            {% endif %} 
-            {% if site_settings and site_settings.title %} {{site_settings.title}} {% else %} BaliqOvqatiUz {% endif %}</h4>
+            <div class="footer-logo">
+            <h4>
+                <!-- Logo bo'lsa -->
+                 {% if site_settings and site_settings.logo %}
+                <img src="{{site_settings.logo.url}}" alt="Logo" />
+                {% else %}
+                <i class="fas fa-fish"></i>
+                {% endif %}
+                <!-- Yoki icon bo'lsa -->
+                <!-- <i class="fas fa-fish"></i> -->
+                
+                <span>{% if site_settings and site_settings.title %} {{site_settings.title}} {% else %} Baliq Ovqati Uz {% endif %}</span>
+            </h4>
+        </div>
                 <p>{% if site_settings and site_settings.description %} {{site_settings.description}} {% else %} Eng sifatli dengiz mahsulotlari yetkazib beruvchisi {% endif %}</p>
                 <div class="social-links">
                     <a href="{% if site_settings and site_settings.facebook_url %} {{site_settings.facebook_url}} {% endif %}"><i class="fab fa-facebook"></i></a>
