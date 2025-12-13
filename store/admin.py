@@ -1,6 +1,7 @@
 # store/admin.py
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from decimal import Decimal
 from .models import Category, Product, Order, Courier, CourierToken
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
@@ -41,14 +42,21 @@ class CategoryAdmin(UnfoldModelAdmin):
     get_is_active_display.short_description = 'Holati'
 
 # ==================== PRODUCT ADMIN ====================
+# ==================== PRODUCT ADMIN ====================
 @admin.register(Product)
 class ProductAdmin(UnfoldModelAdmin):
+    # Remove 'display_image' from list_display_links since it's not a real field
     list_display = ('display_image', 'name', 'category', 'display_price', 'old_price', 'display_stock', 'display_discount', 'get_is_active_display')
-    list_display_links = ('display_image', 'name')
+    list_display_links = ('name',)  # Changed from ('display_image', 'name')
     list_editable = ()
     list_filter = ('category', 'is_active', 'created_at')
     search_fields = ('name', 'description', 'category__name')
     list_per_page = 20
+    
+    # Add this to prevent Django from trying to order by display_image
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('category')
     
     fieldsets = (
         ('Asosiy ma\'lumotlari', {
@@ -67,18 +75,31 @@ class ProductAdmin(UnfoldModelAdmin):
     
     def display_image(self, obj):
         if not obj.image:
-            return format_html(
+            return mark_safe(
                 '<div style="width:50px;height:50px;background:#2C2940;border-radius:5px;'
                 'display:flex;align-items:center;justify-content:center;">'
                 '<i class="fas fa-fish" style="color:#60D5F4;"></i>'
                 '</div>'
             )
         
-        return format_html(
-            '<img src="{}" width="50" height="50" style="border-radius:5px;object-fit:cover;" />',
-            obj.image.url
-        )
+        try:
+            # Make sure image.url exists
+            url = obj.image.url
+            return format_html(
+                '<img src="{}" width="50" height="50" style="border-radius:5px;object-fit:cover;" />',
+                url
+            )
+        except (AttributeError, ValueError):
+            # Handle case where image exists but url doesn't
+            return mark_safe(
+                '<div style="width:50px;height:50px;background:#2C2940;border-radius:5px;'
+                'display:flex;align-items:center;justify-content:center;">'
+                '<i class="fas fa-image" style="color:#60D5F4;"></i>'
+                '</div>'
+            )
     display_image.short_description = 'Rasm'
+    # Add this to prevent Django from trying to order by this method
+    display_image.admin_order_field = None
     
     def display_price(self, obj):
         price_int = int(obj.price)
@@ -107,12 +128,14 @@ class ProductAdmin(UnfoldModelAdmin):
             )
         return format_html('<span style="color:#999;">{}</span>', '-')
     display_discount.short_description = 'Chegirma'
+    display_discount.admin_order_field = None
     
     def get_is_active_display(self, obj):
         if obj.is_active:
             return format_html('<span style="color:green;">{}</span>', '✅')
         return format_html('<span style="color:red;">{}</span>', '❌')
     get_is_active_display.short_description = 'Holati'
+    get_is_active_display.admin_order_field = 'is_active'
     
     def get_created_at_display(self, obj):
         return obj.created_at.strftime('%d.%m.%Y')
@@ -159,7 +182,7 @@ class OrderAdmin(UnfoldModelAdmin):
     full_name_display.short_description = 'Customer'
     
     def total_price_display(self, obj):
-        return f"{obj.total_price} SO'M"
+        return f"${obj.total_price}"
     total_price_display.short_description = 'Total'
     
     def status_display(self, obj):
