@@ -599,7 +599,11 @@
                 {% for product in public_products %}
                 <div class="col-md-3 mb-4">
                     <div class="featured-card">
-                        <img src="{{product.image.url}}" alt="{{product.name}}">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="{% static 'images/no-image.png' %}" alt="Rasm yo‘q">
+                    {% endif %}
                         <h4>{{product.name}}</h4>
                         <p class="price">{{product.price}}</p>
                         <a href="{% url 'shop' %}" class="btn-sm-custom">Xarid qilish</a>

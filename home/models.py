@@ -11,7 +11,7 @@ class BaseModel(models.Model):
         abstract = True
 
 ########################## Bosh sahifa modeli ##########################
-from django.db import models
+
 class HomeSlider(BaseModel):
     SLIDER_TYPE_CHOICES = [
         ('image', 'Rasm'),
