@@ -44,8 +44,8 @@ CORS_REPLACE_HTTPS_REFERER = True
 CORS_ORIGIN_WHITELIST = [
     "https://www.lajvar.uz",
     "http://www.lajvar.uz",
-    "https://bftgroup.trade/",
-    "http://bftgroup.trade/",
+    "https://bftgroup.trade",
+    "http://bftgroup.trade",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "https://lajvar.uz",
@@ -59,8 +59,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://lajvar.uz",
     "http://lajvar.uz",
-    "https://bftgroup.trade/",
-    "http://bftgroup.trade/",
+    "https://bftgroup.trade",
+    "http://bftgroup.trade",
 ]
 
 
