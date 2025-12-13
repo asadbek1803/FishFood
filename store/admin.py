@@ -36,8 +36,8 @@ class CategoryAdmin(UnfoldModelAdmin):
     
     def get_is_active_display(self, obj):
         if obj.is_active:
-            return format_html('<span style="color:green;">✅</span>')
-        return format_html('<span style="color:red;">❌</span>')
+            return format_html('<span style="color:green;">{}</span>', '✅')
+        return format_html('<span style="color:red;">{}</span>', '❌')
     get_is_active_display.short_description = 'Holati'
 
 # ==================== PRODUCT ADMIN ====================
@@ -79,10 +79,8 @@ class ProductAdmin(UnfoldModelAdmin):
             obj.image.url
         )
     display_image.short_description = 'Rasm'
-
     
     def display_price(self, obj):
-        # Decimalni int ga o'tkazish
         price_int = int(obj.price)
         return format_html('{}', price_int)
     display_price.short_description = 'Narxi'
@@ -90,32 +88,30 @@ class ProductAdmin(UnfoldModelAdmin):
     
     def display_stock(self, obj):
         if obj.stock:
-            # Decimalni int ga o'tkazish
             stock_int = int(obj.stock)
             price_int = int(obj.price)
             if price_int > stock_int:
                 return format_html('{}', stock_int)
             return format_html('{}', stock_int)
-        return format_html('<span style="color:#999;">-</span>')
+        return format_html('<span style="color:#999;">{}</span>', '-')
     display_stock.short_description = 'Aksiya narxi'
     display_stock.admin_order_field = 'stock'
     
     def display_discount(self, obj):
         discount = obj.get_price_action_percent()
         if discount > 0:
-            # Float ni formatlash
-            discount_formatted = "{:.0f}".format(discount)  # Kasrsiz ko'rsatish
+            discount_formatted = "{:.0f}".format(discount)
             return format_html(
                 '<span style="background:#ff4444;color:white;padding:2px 8px;border-radius:10px;">{}%</span>',
                 discount_formatted
             )
-        return format_html('<span style="color:#999;">-</span>')
+        return format_html('<span style="color:#999;">{}</span>', '-')
     display_discount.short_description = 'Chegirma'
     
     def get_is_active_display(self, obj):
         if obj.is_active:
-            return format_html('<span style="color:green;">✅</span>')
-        return format_html('<span style="color:red;">❌</span>')
+            return format_html('<span style="color:green;">{}</span>', '✅')
+        return format_html('<span style="color:red;">{}</span>', '❌')
     get_is_active_display.short_description = 'Holati'
     
     def get_created_at_display(self, obj):
@@ -123,7 +119,6 @@ class ProductAdmin(UnfoldModelAdmin):
     get_created_at_display.short_description = 'Yaratilgan sana'
     
     def save_model(self, request, obj, form, change):
-        # Agar stock bo'lmasa, oddiy narx bilan saqlash
         if not obj.stock:
             obj.stock = obj.price
         super().save_model(request, obj, form, change)
@@ -164,7 +159,7 @@ class OrderAdmin(UnfoldModelAdmin):
     full_name_display.short_description = 'Customer'
     
     def total_price_display(self, obj):
-        return f"${obj.total_price}"
+        return f"{obj.total_price} SO'M"
     total_price_display.short_description = 'Total'
     
     def status_display(self, obj):
@@ -199,13 +194,11 @@ class OrderAdmin(UnfoldModelAdmin):
         self.message_user(request, f'{updated} orders marked as processing.')
     
     def export_orders(self, request, queryset):
-        # Export functionality would go here
         pass
     
     mark_as_completed.short_description = "Mark selected orders as completed"
     mark_as_processing.short_description = "Mark selected orders as processing"
     export_orders.short_description = "Export selected orders"
-
 
 
 @admin.register(Courier)
@@ -250,7 +243,7 @@ class CourierTokenAdmin(UnfoldModelAdmin):
     token_short.short_description = 'Token'
     
     def has_add_permission(self, request):
-        return False  # Tokenlar avtomatik yaratiladi
+        return False
 
 # Admin actionlarni qo'shamiz
 CategoryAdmin.actions = [make_active, make_inactive]
