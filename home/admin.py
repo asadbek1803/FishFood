@@ -22,20 +22,17 @@ make_unpublished.short_description = "Tanlanganlarni faolsizlashtirish"
 # ==================== HOME SLIDER ADMIN ====================
 @admin.register(HomeSlider)
 class HomeSliderAdmin(UnfoldModelAdmin):
-    # List display settings - Modeldagi field nomlarini ishlating
-    list_display = ('title',  'slider_type', 'order', 'is_active', 'created_at')
+    list_display = ('title', 'slider_type', 'order', 'is_active', 'created_at')
     list_display_links = ('title', )
     list_editable = ('order', 'is_active')
     list_filter = ('is_active', 'slider_type', 'created_at')
     search_fields = ('title', 'description', 'button_text')
     list_per_page = 20
-    ordering = ('order', '-created_at')  # Modeldagi 'order' fieldi
+    ordering = ('order', '-created_at')
     date_hierarchy = 'created_at'
     
-    # Form display settings
     readonly_fields = ('created_at', 'preview_media', 'get_media_url_display')
     
-    # Fieldsets for add/edit form
     fieldsets = (
         ('Asosiy ma\'lumotlar', {
             'fields': ('title', 'description', 'button_text', 'button_url')
@@ -53,7 +50,6 @@ class HomeSliderAdmin(UnfoldModelAdmin):
         })
     )
     
-    # Custom methods for display
     def display_media_preview(self, obj):
         if obj.slider_type == 'image' and obj.image:
             return format_html(
@@ -73,11 +69,11 @@ class HomeSliderAdmin(UnfoldModelAdmin):
                     '<i class="fab fa-youtube" style="font-size:20px;"></i>'
                     '</div>'
                 )
-        return format_html('<span style="color:#999;">—</span>')
+        return format_html('<span style="color:#999;">{}</span>', '—')
     display_media_preview.short_description = 'Media'
     
     def preview_media(self, obj):
-        if obj.pk:  # Agar object saqlangan bo'lsa
+        if obj.pk:
             if obj.slider_type == 'image' and obj.image:
                 return format_html(
                     '<h4>Rasm ko\'rinishi:</h4>'
@@ -116,11 +112,9 @@ class HomeSliderAdmin(UnfoldModelAdmin):
         return "Media manzili mavjud emas"
     get_media_url_display.short_description = 'Media URL'
     
-    # Get queryset
     def get_queryset(self, request):
         return super().get_queryset(request).order_by('order', '-created_at')
     
-    # Custom actions
     actions = ['activate_sliders', 'deactivate_sliders', 'set_as_images', 'set_as_videos']
     
     def activate_sliders(self, request, queryset):
@@ -143,9 +137,7 @@ class HomeSliderAdmin(UnfoldModelAdmin):
         self.message_user(request, f"{updated} ta slider video turiga o'zgartirildi")
     set_as_videos.short_description = "Video turiga o'zgartirish"
     
-    # Save method to handle media logic
     def save_model(self, request, obj, form, change):
-        # Agar slider_type o'zgarsa, qarama-qarshi media ni tozalash
         if change:
             try:
                 old_obj = HomeSlider.objects.get(pk=obj.pk)
@@ -153,14 +145,13 @@ class HomeSliderAdmin(UnfoldModelAdmin):
                     if obj.slider_type == 'image':
                         obj.video = None
                         obj.video_url = ''
-                    else:  # video
+                    else:
                         obj.image = None
             except HomeSlider.DoesNotExist:
                 pass
         
         super().save_model(request, obj, form, change)
     
-    # Form validation
     def clean(self):
         cleaned_data = super().clean()
         slider_type = cleaned_data.get('slider_type')
@@ -255,11 +246,9 @@ class SiteSettingAdmin(UnfoldModelAdmin):
     logo_preview.short_description = 'Logo'
     
     def has_add_permission(self, request):
-        # Faqat bitta site setting bo'lishi kerak
         return not SiteSetting.objects.exists()
     
     def has_delete_permission(self, request, obj=None):
-        # O'chirishni taqiqlash
         return False
 
 # ==================== ABOUT US ADMIN ====================
