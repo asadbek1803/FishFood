@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', '/your-default-secret-key/')
 DEBUG = True
 SIGNAL_HANDLERS = True
 
-ALLOWED_HOSTS = ["lajvar.uz", "www.lajvar.uz", "localhost", ]
+ALLOWED_HOSTS = ["lajvar.uz", "www.lajvar.uz", "localhost", "bftgroup.trade"]
 
 
 
@@ -41,6 +41,8 @@ CORS_REPLACE_HTTPS_REFERER = True
 CORS_ORIGIN_WHITELIST = [
     "https://www.lajvar.uz",
     "http://www.lajvar.uz",
+    "https://bftgroup.trade/",
+    "http://bftgroup.trade/",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "https://lajvar.uz",
@@ -54,6 +56,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://lajvar.uz",
     "http://lajvar.uz",
+    "https://bftgroup.trade/",
+    "http://bftgroup.trade/",
 ]
 
 
@@ -170,8 +174,8 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 UNFOLD = {
-    "SITE_TITLE": "Baliq OvqatiUz Admin",
-    "SITE_HEADER": "Baliq OvqatiUz Admin",
+    "SITE_TITLE": "LajVar Admin",
+    "SITE_HEADER": "LajVae Admin",
     "SITE_SUBHEADER": "Boshqaruvchi bo'lim",
     "SITE_URL": "/",
     "SITE_SYMBOL": "🐟",
