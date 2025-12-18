@@ -16,6 +16,8 @@ from django.urls import reverse_lazy
 import cloudinary
 
 
+# Cloudinary sozlamalari - katta video fayllar uchun optimallashtirilgan
+# Cloudinary katta fayllar uchun avtomatik chunked upload qiladi
 cloudinary.config(secure=True)
 load_dotenv()  # Load environment variables from .env file
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -183,6 +185,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = 'media/'
 
+# File Upload Settings - Video yuklash uchun optimallashtirilgan
+FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100 MB - memory'da saqlash
+DATA_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100 MB
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+FILE_UPLOAD_PERMISSIONS = 0o644
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
+
+# Gunicorn timeout sozlamalari (environment variable orqali)
+# Production'da: export GUNICORN_TIMEOUT=300
+# Yoki Procfile'da: web: gunicorn config.wsgi --timeout 300
 
 UNFOLD = {
     "SITE_TITLE": "LajVar Admin",

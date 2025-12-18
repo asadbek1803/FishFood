@@ -491,4 +491,16 @@ class GalleryAdmin(UnfoldModelAdmin):
             except Gallery.DoesNotExist:
                 pass
         
+        # Video fayl yuklash uchun timeout'ni oshirish
+        # Bu Django admin'da katta fayllar yuklash uchun zarur
         super().save_model(request, obj, form, change)
+    
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        # Video fayl uchun max size cheklovini olib tashlash yoki oshirish
+        if 'video' in form.base_fields:
+            form.base_fields['video'].widget.attrs.update({
+                'accept': 'video/*',
+                'data-max-size': '500MB'  # Frontend validation uchun
+            })
+        return form

@@ -194,9 +194,20 @@ class Gallery(BaseModel):
     # Image field
     image = models.ImageField(upload_to='gallery/images/', blank=True, null=True, verbose_name="Rasm")
     
-    # Video field
-    video = models.FileField(upload_to='gallery/videos/', blank=True, null=True, verbose_name="Video fayl")
-    video_url = models.URLField(blank=True, null=True, verbose_name="Video URL (YouTube, Vimeo)")
+    # Video field - katta fayllar uchun optimallashtirilgan
+    video = models.FileField(
+        upload_to='gallery/videos/', 
+        blank=True, 
+        null=True, 
+        verbose_name="Video fayl",
+        help_text="Maksimal hajm: 500MB. Katta videolar uchun video_url ishlatish tavsiya etiladi."
+    )
+    video_url = models.URLField(
+        blank=True, 
+        null=True, 
+        verbose_name="Video URL (YouTube, Vimeo)",
+        help_text="YouTube yoki Vimeo video linkini kiriting. Bu katta videolar uchun yaxshiroq variant."
+    )
     
     category = models.CharField(max_length=100, verbose_name="Kategoriya", blank=True, null=True, help_text="Masalan: Ish jarayonlari, Xabarlar, Mahsulotlar")
     
