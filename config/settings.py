@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', '/your-default-secret-key/')
 DEBUG = True
 SIGNAL_HANDLERS = True
 
-ALLOWED_HOSTS = ["lajvar.uz", "www.lajvar.uz", "localhost", "bftgroup.trade"]
+ALLOWED_HOSTS = ["lajvar.uz", "www.lajvar.uz", "localhost", "bftgroup.trade", "127.0.0.1"]
 
 
 
@@ -124,17 +124,22 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('PGDATABASE', 'railway'),
-        'USER': os.getenv('PGUSER', 'postgres'),
-        'PASSWORD': os.getenv('PGPASSWORD'),
-        'HOST': os.getenv('PGHOST'),
-        'PORT': os.getenv('PGPORT', '43431'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('PGDATABASE', 'railway'),
+#         'USER': os.getenv('PGUSER', 'postgres'),
+#         'PASSWORD': os.getenv('PGPASSWORD'),
+#         'HOST': os.getenv('PGHOST'),
+#         'PORT': os.getenv('PGPORT', '43431'),
+#     }
+# }
 
+import dj_database_url
+
+DATABASES = {
+    "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
+}
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -181,7 +186,7 @@ MEDIA_URL = 'media/'
 
 UNFOLD = {
     "SITE_TITLE": "LajVar Admin",
-    "SITE_HEADER": "LajVae Admin",
+    "SITE_HEADER": "LajVar Admin",
     "SITE_SUBHEADER": "Boshqaruvchi bo'lim",
     "SITE_URL": "/",
     "SITE_SYMBOL": "🐟",

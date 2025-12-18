@@ -174,12 +174,15 @@ async def _send_notification_async(order):
 
     
 def shop_view(request):
+    from home.models import SiteSetting
+    
     categories = Category.objects.all()
-    products = Product.objects.all()
+    products= Product.objects.filter(is_active=True)
     
     context = {
         'products': products,
         'categories': categories,
+        'site_settings': SiteSetting.objects.first(),
     }
     return render(request, 'shop.html', context)
 

@@ -698,13 +698,13 @@ async def notify_couriers_about_order(order):
     try:
         # Mahsulotlarni olish
         order_items = await sync_to_async(list)(
-            order.items.select_related('product').all()
+            order.products.all()
         )
         
         # Mahsulotlar ro'yxatini tayyorlash
         products_text = ""
         for item in order_items:
-            products_text += f"  • {item.product.name} - {item.quantity} {item.product.unit} x {item.price:,} so'm\n"
+            products_text += f"  • {item.name} -  {item.product} x {item.price:,} so'm\n"
         
         if not products_text:
             products_text = "  • Ma'lumot yo'q\n"

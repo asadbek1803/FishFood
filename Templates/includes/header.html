@@ -1,44 +1,169 @@
 {% load static %}
-
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sea FoodISH - Baliq Mahsulotlari</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-</head>
-<body>
-    <!-- Navbar -->
-<nav class="navbar navbar-expand-lg sticky-top">
-    <div class="container-fluid">
-        <nav style="padding: 20px; background: #2C2940; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <a class="navbar-brand" href="#">
-            <!-- Logo bo'lsa -->
-             {% if site_settings and site_settings.logo %}
-            <img src="{{site_settings.logo.url}}" alt="Logo" />
-            {% else %}
+<nav class="navbar" id="navbar">
+    <a href="{% url 'home' %}" class="navbar-brand">
+        {% if site_settings and site_settings.logo %}
+            <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.title }}">
+        {% else %}
             <i class="fas fa-fish"></i>
+        {% endif %}
+        <span>
+            {% if site_settings and site_settings.title %}
+                {{ site_settings.title }}
+            {% else %}
+                FISHFOOD
             {% endif %}
-            <!-- Yoki icon bo'lsa -->
-            <!-- <i class="fas fa-fish"></i> -->
-            
-            <span>{% if site_settings and site_settings.title %} {{site_settings.title}} {% else %} Baliq Ovqati Uz {% endif %}</span>
-        </a>
-    </nav>
-        <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
+        </span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+        <li>
+            <a href="{% url 'home' %}" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                <i class="fas fa-home"></i>
+                <span>Asosiy</span>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'shop' %}" class="nav-link {% if '/shop' in request.path %}active{% endif %}">
+                <i class="fas fa-store"></i>
+                <span>Do'kon</span>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'about' %}" class="nav-link {% if '/about' in request.path %}active{% endif %}">
+                <i class="fas fa-info-circle"></i>
+                <span>Biz Haqimizda</span>
+            </a>
+        </li>
+        <li class="partner-flags">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Flag_of_Uzbekistan.svg" class="flag" alt="UZ" loading="lazy">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg" class="flag" alt="IR" loading="lazy">
+        </li>
+    </ul>
+
+    <div class="navbar-actions">
+        <button id="openCart" class="btn-cart" aria-label="Savat">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cartBadge" class="cart-badge">0</span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">Asosiy</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}#services">Xizmatlar</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'shop' %}">Do'kon</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">Biz Haqimizda</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% if site_settings and site_settings.telegram_url %} {{site_settings.telegram_url}} {% else %} # {% endif %}">Aloqa</a></li>
-            </ul>
-        </div>
+        <button class="navbar-toggler" id="navToggler" aria-label="Menu" type="button">
+            <i class="fas fa-bars"></i>
+        </button>
     </div>
 </nav>
+
+<!-- Cart Modal -->
+<div class="modal-overlay" id="cartModal">
+    <div class="modal-content">
+        <button class="close-modal" aria-label="Yopish" type="button">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="modal-header">
+            <i class="fas fa-shopping-cart"></i>
+            <h2>Savatingiz</h2>
+        </div>
+
+        <div id="cartItems" class="cart-items"></div>
+
+        <div class="cart-total">
+            <span>Jami:</span>
+            <span id="cartTotal">0</span> so'm
+        </div>
+
+        <div id="checkoutForm" class="checkout-form">
+            <h4>
+                <i class="fas fa-file-invoice"></i>
+                Buyurtma berish
+            </h4>
+
+            <form id="orderForm">
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-user"></i>
+                        Ism Familiya
+                    </label>
+                    <input type="text" name="full_name" class="form-control" placeholder="Masalan: Alisher Navoiy" required>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-phone"></i>
+                        Telefon raqami
+                    </label>
+                    <input type="tel" name="phone" class="form-control" placeholder="+998 90 123 45 67" required pattern="[0-9+\s\-\(\)]+">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-map-marker-alt"></i>
+                        Viloyat
+                    </label>
+                    <select name="region" class="form-control" required>
+                        <option value="">Viloyatni tanlang</option>
+                        <option value="Toshkent">Toshkent</option>
+                        <option value="Toshkent viloyati">Toshkent viloyati</option>
+                        <option value="Samarqand">Samarqand</option>
+                        <option value="Buxoro">Buxoro</option>
+                        <option value="Andijon">Andijon</option>
+                        <option value="Farg'ona">Farg'ona</option>
+                        <option value="Namangan">Namangan</option>
+                        <option value="Qashqadaryo">Qashqadaryo</option>
+                        <option value="Surxondaryo">Surxondaryo</option>
+                        <option value="Sirdaryo">Sirdaryo</option>
+                        <option value="Jizzax">Jizzax</option>
+                        <option value="Navoiy">Navoiy</option>
+                        <option value="Xorazm">Xorazm</option>
+                        <option value="Qoraqalpog'iston">Qoraqalpog'iston</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-building"></i>
+                        Tuman/Shahar
+                    </label>
+                    <input type="text" name="district" class="form-control" placeholder="Masalan: Chilonzor tumani" required>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-home"></i>
+                        To'liq manzil
+                    </label>
+                    <input type="text" name="address" class="form-control" placeholder="Ko'cha, uy raqami, kvartira" required>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-credit-card"></i>
+                        To'lov usuli
+                    </label>
+                    <select name="payment_method" class="form-control">
+                        <option value="cash">💵 Naqd pul</option>
+                        <option value="card">💳 Bank kartasi</option>
+                        <option value="click">📱 Click / Payme</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-comment"></i>
+                        Qo'shimcha izoh (ixtiyoriy)
+                    </label>
+                    <textarea name="notes" class="form-control" placeholder="Buyurtmangiz haqida qo'shimcha ma'lumot..." rows="3"></textarea>
+                </div>
+
+                <button type="submit" id="checkoutBtn" class="btn-neon btn-full">
+                    <i class="fas fa-check-circle"></i>
+                    Buyurtma berish
+                </button>
+            </form>
+
+            <p class="form-info">
+                <i class="fas fa-info-circle"></i>
+                Buyurtmangiz qabul qilingach, tez orada operatorlarimiz siz bilan bog'lanadi.
+            </p>
+        </div>
+    </div>
+</div>
+

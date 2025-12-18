@@ -1,258 +1,125 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Do'kon - FishFood{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/shop.css' %}">
+{% endblock %}
+
 {% block content %}
-<style>
-    .category-filter {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-        margin-bottom: 30px;
-    }
-    
-    .btn-filter {
-        padding: 8px 20px;
-        background: var(--dark-bg);
-        border: 1px solid rgba(96, 213, 244, 0.2);
-        color: white;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    
-    .btn-filter:hover,
-    .btn-filter.active {
-        background: var(--primary-color);
-        color: var(--dark-bg);
-        border-color: var(--primary-color);
-    }
-    
-    .product-badge {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        background: #ff4444;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 12px;
-        font-weight: bold;
-        z-index: 1;
-    }
-    
-    .product-category {
-        color: var(--primary-color);
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 5px;
-    }
-    
-    .product-price-container {
-        margin: 10px 0;
-    }
-    
-    .product-price-old {
-        text-decoration: line-through;
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 14px;
-    }
-    
-    .product-price-new {
-        color: var(--primary-color);
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-    .product-price {
-        color: var(--primary-color);
-        font-size: 20px;
-        font-weight: bold;
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 50px 20px;
-        color: rgba(255, 255, 255, 0.6);
-    }
-    
-    .empty-state i {
-        color: var(--primary-color);
-        margin-bottom: 20px;
-    }
-
-    .quantity-control {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin: 15px 0;
-    }
-
-    .quantity-control input {
-        width: 60px;
-        text-align: center;
-        padding: 8px;
-        background: var(--darker-bg);
-        border: 1px solid var(--primary-color);
-        color: white;
-        border-radius: 5px;
-    }
-
-    .quantity-control button {
-        width: 35px;
-        height: 35px;
-        border: 1px solid var(--primary-color);
-        background: var(--darker-bg);
-        color: var(--primary-color);
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-    }
-
-    .quantity-control button:hover {
-        background: var(--primary-color);
-        color: var(--dark-bg);
-    }
-</style>
-
-
-<!-- Page Header -->
-<div class="page-header">
+<!-- Shop Header -->
+<section class="shop-header">
     <div class="container">
-        <h1><i class="fas fa-store"></i> Bizning Do'konimiz</h1>
-        <p>Eng sifatli dengiz mahsulotlarini tanlang</p>
-    </div>
-</div>
-
-<!-- Shop Section -->
-<section class="shop-section">
-    <div class="container">
-        <!-- Category Filter -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="category-filter">
-                    <button class="btn-filter active" data-category="all">Hammasi</button>
-                    {% for category in categories %}
-                    <button class="btn-filter" data-category="{{ category.id }}">{{ category.name }}</button>
-                    {% endfor %}
-                </div>
+        <h1 class="page-title">Bizning Do'kon</h1>
+        <p class="page-subtitle">Premium sifatli baliq ovqatlari</p>
+        
+        <div class="shop-filters">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Mahsulot qidirish..." autocomplete="off">
             </div>
+            <select id="sortSelect" class="sort-select">
+                <option value="default">Saralash</option>
+                <option value="price-asc">Narxi: Arzon → Qimmat</option>
+                <option value="price-desc">Narxi: Qimmat → Arzon</option>
+                <option value="name-asc">Nomi: A → Z</option>
+                <option value="name-desc">Nomi: Z → A</option>
+            </select>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="section shop-section">
+    <div class="container">
+        <!-- Category Filters -->
+        <div class="category-filters">
+            <button class="category-btn active" data-category="all" type="button">
+                <i class="fas fa-th"></i>
+                <span>Barchasi</span>
+            </button>
+            {% for category in categories %}
+            <button class="category-btn" data-category="{{ category.id }}" type="button">
+                <i class="{{ category.icon }}"></i>
+                <span>{{ category.name }}</span>
+            </button>
+            {% endfor %}
         </div>
 
         <!-- Products Grid -->
-<div class="row" id="productsGrid">
-    {% for product in products %}
-    <div class="col-md-4 col-lg-3 mb-4 product-item" data-category="{{ product.category.id }}">
-        
-        <div class="product-card"
-             data-product-id="{{ product.id }}"
-             data-product-name="{{ product.name }}"
-             data-product-price="{% if product.stock and product.get_price_action_percent > 0 %}{{ product.stock }}{% else %}{{ product.price }}{% endif %}">
-            
-            <!-- Product Image -->
-            {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
-            {% else %}
-                <img src="https://images.unsplash.com/photo-1574781330855-d0db8cc6a79c?w=400&h=300&fit=crop" alt="{{ product.name }}" class="product-image">
-            {% endif %}
-            
-            <!-- Discount Badge -->
-            {% if product.stock and product.get_price_action_percent > 0 %}
-                <div class="product-badge">
-                    {{ product.get_price_action_percent|floatformat:0 }}% chegirma
-                </div>
-            {% endif %}
-            
-            <div class="product-info">
-                
-                <div class="product-category">{{ product.category.name }}</div>
-                
-                <h3 class="product-name">{{ product.name }}</h3>
-                
-                <p class="product-description">
-                    {{ product.description|truncatechars:60 }}
-                </p>
-                
-                <!-- Prices -->
-                <div class="product-price-container">
-                    {% if product.stock and product.get_price_action_percent > 0 %}
-                        <div class="product-price-old">
-                            {{ product.old_price|floatformat:0 }} so'm
-                        </div>
-                        <div class="product-price-new">
-                            {{ product.price|floatformat:0 }} so'm/kg
-                        </div>
-                        <br>
-                        <div>
-                            <strong>Qolgan mahsulotlar soni/kg: {{product.stock}} </strong> 
-                        </div>
+        <div class="products-grid" id="productsGrid">
+            {% for product in products %}
+            <div class="product-card" 
+                 data-category="{{ product.category.id }}"
+                 data-product-id="{{ product.id }}"
+                 data-product-name="{{ product.name }}"
+                 data-product-price="{{ product.price }}">
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
                     {% else %}
-                        <div class="product-price">
-                            {{ product.price|floatformat:0 }} so'm/kg
-                        </div>
-                        <div>
-                            <strong>Qolgan mahsulotlar soni/kg: {{product.stock}}</strong> 
+                        <div class="product-placeholder">
+                            <i class="fas fa-fish"></i>
                         </div>
                     {% endif %}
+                    <div class="product-badge">
+                        <i class="{{ product.category.icon }}"></i>
+                        <span>{{ product.category.name }}</span>
+                    </div>
                 </div>
                 
-                <!-- Quantity -->
-                <div class="quantity-control">
-                    <button type="button" class="decrease-btn" data-id="{{ product.id }}">-</button>
-                    <input type="number" id="quantity_{{ product.id }}" value="1" min="0.5" step="0.5" readonly>
-                    <button type="button" class="increase-btn" data-id="{{ product.id }}">+</button>
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    {% if product.description %}
+                    <p class="product-description">{{ product.description|truncatewords:15 }}</p>
+                    {% endif %}
+                    
+                    <div class="product-features">
+                        {% if product.is_fresh %}
+                        <span class="feature-badge fresh">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Yangi</span>
+                        </span>
+                        {% endif %}
+                        {% if product.is_certified %}
+                        <span class="feature-badge certified">
+                            <i class="fas fa-certificate"></i>
+                            <span>Sertifikat</span>
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-price">{{ product.price|floatformat:0 }} so'm <span>/ kg</span></div>
+                    
+                    <div class="product-quantity">
+                        <button class="qty-btn decrease" data-id="{{ product.id }}" type="button">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" id="quantity_{{ product.id }}" class="qty-input" value="1" min="0.5" step="0.5">
+                        <button class="qty-btn increase" data-id="{{ product.id }}" type="button">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <button class="btn-add-cart" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}" type="button">
+                        <i class="fas fa-cart-plus"></i>
+                        <span>Savatga qo'shish</span>
+                    </button>
                 </div>
-                
-                <!-- Add to Cart -->
-                <button class="btn-add-cart add-to-cart-btn" data-id="{{ product.id }}">
-                    <i class="fas fa-cart-plus"></i> Savatga qo'shish
-                </button>
             </div>
-        </div>
-        
-    </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="empty-state">
-            <i class="fas fa-fish fa-4x"></i>
-            <h3>Mahsulotlar topilmadi</h3>
-            <p>Tez orada yangi mahsulotlar qo'shiladi</p>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <p>Hozircha mahsulotlar yo'q</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
-    {% endfor %}
-</div>
-
 </section>
+{% endblock %}
 
-<!-- Cart Icon -->
-<div class="cart-icon" id="cartIcon">
-    <i class="fas fa-shopping-cart"></i>
-    <span class="cart-badge" id="cartBadge">0</span>
-</div>
-
-<!-- Cart Modal -->
-<div class="order-modal" id="cartModal">
-    <div class="order-content">
-        <h3><i class="fas fa-shopping-cart"></i> Savatingiz</h3>
-        <div id="cartItems">
-            <!-- Cart items will appear here -->
-        </div>
-        <div class="cart-summary">
-            <div class="total-price">
-                Jami: <span id="cartTotal">0</span> so'm
-            </div>
-            <button class="btn-submit" id="checkoutBtn">
-                <i class="fas fa-check"></i> Buyurtma berish
-            </button>
-            <button class="btn-close-modal" id="closeCartBtn">
-                <i class="fas fa-times"></i> Yopish
-            </button>
-        </div>
-    </div>
-</div>
-
-<script src="{% static 'shop.js' %}"></script>
+{% block extra_js %}
+<script src="{% static 'shop.js' %}" defer></script>
 {% endblock %}
 

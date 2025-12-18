@@ -92,6 +92,7 @@ class SiteSetting(BaseModel):
     facebook_url = models.URLField(max_length=200, blank=True, verbose_name="Facebook URL")
     telegram_url = models.URLField(max_length=200, blank=True, verbose_name="Telegram URL")
     instagram_url = models.URLField(max_length=200, blank=True, verbose_name="Instagram URL")
+    youtube_url = models.URLField(max_length=200, blank=True, verbose_name="Youtube URL")
 
     class Meta:
         verbose_name = 'Sayt sozlamasi'
