@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from .models import (
     HomeSlider, Service, Testimonial, SiteSetting,
     AboutUs, AboutUsMissons, AboutUsValues, AboutUsStats,
@@ -422,13 +423,13 @@ class GalleryAdmin(UnfoldModelAdmin):
             )
         elif obj.media_type == 'video':
             if obj.video:
-                return format_html(
+                return mark_safe(
                     '<div style="width:80px;height:45px;background:#60d5f4;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;">'
                     '<i class="fas fa-video" style="font-size:20px;"></i>'
                     '</div>'
                 )
             elif obj.video_url:
-                return format_html(
+                return mark_safe(
                     '<div style="width:80px;height:45px;background:#ff4444;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;">'
                     '<i class="fab fa-youtube" style="font-size:20px;"></i>'
                     '</div>'
