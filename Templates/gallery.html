@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Galereya - FishFood{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/gallery.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Gallery Header -->
+<section class="gallery-header">
+    <div class="container">
+        <h1 class="page-title">Galereya</h1>
+        <p class="page-subtitle">Bizning ish jarayonlari, xabarlar va mahsulotlarimiz</p>
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="section gallery-section">
+    <div class="container">
+        <!-- Category Filters -->
+        {% if categories %}
+        <div class="gallery-filters">
+            <button class="gallery-filter-btn active" data-category="all" type="button">
+                <i class="fas fa-th"></i>
+                <span>Barchasi</span>
+            </button>
+            {% for category in categories %}
+            <button class="gallery-filter-btn" data-category="{{ category }}" type="button">
+                <i class="fas fa-folder"></i>
+                <span>{{ category }}</span>
+            </button>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid" id="galleryGrid">
+            {% for item in galleries %}
+            <div class="gallery-item" 
+                 data-category="{{ item.category|default:'all' }}"
+                 data-media-type="{{ item.media_type }}"
+                 data-media-url="{% if item.media_type == 'video' %}{{ item.get_media_url }}{% else %}{{ item.image.url }}{% endif %}">
+                
+                <div class="gallery-card">
+                    {% if item.media_type == 'image' %}
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy">
+                        {% else %}
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        {% if item.video %}
+                        <video muted>
+                            <source src="{{ item.video.url }}" type="video/mp4">
+                        </video>
+                        <div class="video-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        {% elif item.video_url %}
+                        <div class="video-thumbnail">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="video-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        {% else %}
+                        <div class="gallery-placeholder">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>{{ item.title }}</h3>
+                            {% if item.description %}
+                            <p>{{ item.description|truncatewords:15 }}</p>
+                            {% endif %}
+                            {% if item.category %}
+                            <span class="gallery-category">{{ item.category }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="gallery-action">
+                            <i class="fas fa-{% if item.media_type == 'video' %}play{% else %}expand{% endif %}"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <i class="fas fa-images"></i>
+                <p>Hozircha galereya bo'sh</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Video Modal -->
+<div class="video-modal" id="videoModal">
+    <div class="video-modal-content">
+        <button class="video-modal-close" aria-label="Yopish" type="button">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="video-container" id="videoContainer">
+            <!-- Video yuklanadi -->
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="image-modal" id="imageModal">
+    <div class="image-modal-content">
+        <button class="image-modal-close" aria-label="Yopish" type="button">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="modalImage" src="" alt="">
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'gallery.js' %}" defer></script>
+{% endblock %}
+

@@ -34,6 +34,12 @@
                 <span>Biz Haqimizda</span>
             </a>
         </li>
+        <li>
+            <a href="{% url 'gallery' %}" class="nav-link {% if '/gallery' in request.path %}active{% endif %}">
+                <i class="fas fa-images"></i>
+                <span>Galereya</span>
+            </a>
+        </li>
         <li class="partner-flags">
             <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Flag_of_Uzbekistan.svg" class="flag" alt="UZ" loading="lazy">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg" class="flag" alt="IR" loading="lazy">

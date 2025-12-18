@@ -179,3 +179,48 @@ class AboutUsQuestions(BaseModel):
 
     def __str__(self):
         return self.questionTitle
+
+######################## Gallery Model ########################
+class Gallery(BaseModel):
+    MEDIA_TYPE_CHOICES = [
+        ('image', 'Rasm'),
+        ('video', 'Video'),
+    ]
+    
+    title = models.CharField(max_length=200, verbose_name="Sarlavha")
+    description = models.TextField(verbose_name="Tavsif", blank=True, null=True)
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPE_CHOICES, default='image', verbose_name="Media turi")
+    
+    # Image field
+    image = models.ImageField(upload_to='gallery/images/', blank=True, null=True, verbose_name="Rasm")
+    
+    # Video field
+    video = models.FileField(upload_to='gallery/videos/', blank=True, null=True, verbose_name="Video fayl")
+    video_url = models.URLField(blank=True, null=True, verbose_name="Video URL (YouTube, Vimeo)")
+    
+    category = models.CharField(max_length=100, verbose_name="Kategoriya", blank=True, null=True, help_text="Masalan: Ish jarayonlari, Xabarlar, Mahsulotlar")
+    
+    class Meta:
+        ordering = ['display_order', '-created_at']
+        verbose_name = 'Galereya'
+        verbose_name_plural = 'Galereya'
+
+    def __str__(self):
+        return self.title
+    
+    def get_media_url(self):
+        if self.media_type == 'video':
+            if self.video:
+                return self.video.url
+            elif self.video_url:
+                return self.video_url
+        elif self.image:
+            return self.image.url
+        return None
+    
+    def get_thumbnail_url(self):
+        if self.image:
+            return self.image.url
+        elif self.media_type == 'video':
+            return None  # Video thumbnail uchun alohida yechim kerak
+        return None

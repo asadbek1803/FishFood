@@ -6,7 +6,7 @@ from django.utils.html import format_html
 from .models import (
     HomeSlider, Service, Testimonial, SiteSetting,
     AboutUs, AboutUsMissons, AboutUsValues, AboutUsStats,
-    AboutUsTeam, AboutUsQuestions
+    AboutUsTeam, AboutUsQuestions, Gallery
 )
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
 
@@ -383,3 +383,112 @@ class AboutUsQuestionsAdmin(UnfoldModelAdmin):
             'fields': ('display_order', 'is_active')
         })
     )
+
+# ==================== GALLERY ADMIN ====================
+@admin.register(Gallery)
+class GalleryAdmin(UnfoldModelAdmin):
+    list_display = ('title', 'media_type', 'category', 'media_preview', 'display_order', 'is_active', 'created_at')
+    list_editable = ('display_order', 'is_active')
+    list_filter = ('is_active', 'media_type', 'category', 'created_at')
+    search_fields = ('title', 'description', 'category')
+    list_per_page = 20
+    ordering = ('display_order', '-created_at')
+    date_hierarchy = 'created_at'
+    
+    readonly_fields = ('created_at', 'updated_at', 'preview_media', 'get_media_url_display')
+    
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('title', 'description', 'category')
+        }),
+        ('Media Kontent', {
+            'fields': ('media_type', 'image', 'video', 'video_url', 'preview_media'),
+            'description': 'Media turini tanlang, keyin mos media ni yuklang'
+        }),
+        ('Ko\'rinish sozlamalari', {
+            'fields': ('display_order', 'is_active')
+        }),
+        ('Vaqt yorliqlari', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        })
+    )
+    
+    def media_preview(self, obj):
+        if obj.media_type == 'image' and obj.image:
+            return format_html(
+                '<img src="{}" width="80" height="45" style="border-radius:4px;object-fit:cover;" />',
+                obj.image.url
+            )
+        elif obj.media_type == 'video':
+            if obj.video:
+                return format_html(
+                    '<div style="width:80px;height:45px;background:#60d5f4;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;">'
+                    '<i class="fas fa-video" style="font-size:20px;"></i>'
+                    '</div>'
+                )
+            elif obj.video_url:
+                return format_html(
+                    '<div style="width:80px;height:45px;background:#ff4444;border-radius:4px;display:flex;align-items:center;justify-content:center;color:white;">'
+                    '<i class="fab fa-youtube" style="font-size:20px;"></i>'
+                    '</div>'
+                )
+        return format_html('<span style="color:#999;">{}</span>', '—')
+    media_preview.short_description = 'Media'
+    
+    def preview_media(self, obj):
+        if obj.pk:
+            if obj.media_type == 'image' and obj.image:
+                return format_html(
+                    '<h4>Rasm ko\'rinishi:</h4>'
+                    '<img src="{}" width="400" style="border-radius:8px;margin:10px 0;max-width:100%;" />',
+                    obj.image.url
+                )
+            elif obj.media_type == 'video':
+                if obj.video:
+                    return format_html(
+                        '<h4>Video fayl:</h4>'
+                        '<div style="background:#333;color:white;padding:15px;border-radius:8px;margin:10px 0;">'
+                        '<i class="fas fa-video" style="margin-right:10px;"></i>{}'
+                        '</div>',
+                        obj.video.name.split('/')[-1] if obj.video else ''
+                    )
+                elif obj.video_url:
+                    return format_html(
+                        '<h4>Video URL:</h4>'
+                        '<div style="background:#333;color:white;padding:15px;border-radius:8px;margin:10px 0;">'
+                        '<i class="fab fa-youtube" style="margin-right:10px;color:#ff4444;"></i>{}'
+                        '</div>',
+                        obj.video_url
+                    )
+        return "Media yuklanmagan yoki tanlanmagan"
+    preview_media.short_description = 'Media ko\'rinishi'
+    
+    def get_media_url_display(self, obj):
+        if obj.pk:
+            media_url = obj.get_media_url()
+            if media_url:
+                return format_html(
+                    '<strong>Media manzili:</strong><br>'
+                    '<code style="background:#f5f5f5;padding:5px;border-radius:3px;display:inline-block;margin-top:5px;">{}</code>',
+                    media_url
+                )
+        return "Media manzili mavjud emas"
+    get_media_url_display.short_description = 'Media URL'
+    
+    actions = [make_published, make_unpublished]
+    
+    def save_model(self, request, obj, form, change):
+        if change:
+            try:
+                old_obj = Gallery.objects.get(pk=obj.pk)
+                if old_obj.media_type != obj.media_type:
+                    if obj.media_type == 'image':
+                        obj.video = None
+                        obj.video_url = ''
+                    else:
+                        obj.image = None
+            except Gallery.DoesNotExist:
+                pass
+        
+        super().save_model(request, obj, form, change)

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from home.models import HomeSlider, Service, AboutUsQuestions, Testimonial,AboutUsTeam, SiteSetting, AboutUs, AboutUsMissons, AboutUsValues, AboutUsStats
+from home.models import HomeSlider, Service, AboutUsQuestions, Testimonial,AboutUsTeam, SiteSetting, AboutUs, AboutUsMissons, AboutUsValues, AboutUsStats, Gallery
 from store.models import Product
 # Create your views here.
 
@@ -26,3 +26,23 @@ def about_view(request):
         'about_us_questions': AboutUsQuestions.objects.all(),
     }
     return render(request, 'about.html', context=data)
+
+def gallery_view(request):
+    galleries = Gallery.objects.filter(is_active=True)
+    
+    # Kategoriyalar bo'yicha guruhlash
+    categories = galleries.values_list('category', flat=True).distinct().exclude(category__isnull=True).exclude(category='')
+    
+    # Tanlangan kategoriya
+    selected_category = request.GET.get('category', 'all')
+    
+    if selected_category != 'all':
+        galleries = galleries.filter(category=selected_category)
+    
+    data = {
+        'galleries': galleries,
+        'categories': categories,
+        'selected_category': selected_category,
+        'site_settings': SiteSetting.objects.first(),
+    }
+    return render(request, 'gallery.html', context=data)
