@@ -53,25 +53,27 @@
                         </div>
                         {% endif %}
                     {% else %}
-                        {% if item.video %}
-                        <video muted>
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.title }}" loading="lazy">
+                        {% elif item.video %}
+                        <video muted preload="metadata">
                             <source src="{{ item.video.url }}" type="video/mp4">
                         </video>
-                        <div class="video-overlay">
-                            <i class="fas fa-play"></i>
-                        </div>
                         {% elif item.video_url %}
                         <div class="video-thumbnail">
                             <i class="fas fa-video"></i>
-                        </div>
-                        <div class="video-overlay">
-                            <i class="fas fa-play"></i>
                         </div>
                         {% else %}
                         <div class="gallery-placeholder">
                             <i class="fas fa-video"></i>
                         </div>
                         {% endif %}
+                        <!-- Video uchun doimiy ko'rinadigan play ikon -->
+                        <div class="video-play-overlay">
+                            <div class="video-play-icon">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                        </div>
                     {% endif %}
                     
                     <div class="gallery-overlay">

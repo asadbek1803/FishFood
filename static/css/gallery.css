@@ -102,37 +102,71 @@
 .video-thumbnail {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--primary);
-    font-size: 4rem;
+    font-size: 3rem;
+    position: relative;
 }
 
-.video-overlay {
+.video-play-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s;
+    z-index: 2;
+    pointer-events: none;
 }
 
-.gallery-card:hover .video-overlay {
-    opacity: 1;
+.video-play-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 217, 255, 0.5);
+    box-shadow: 0 0 30px rgba(0, 217, 255, 0.4);
+    transition: all 0.3s ease;
 }
 
-.video-overlay i {
-    font-size: 4rem;
+.video-play-icon i {
+    font-size: 3rem;
     color: #fff;
-    text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+    text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
     animation: pulse 2s ease-in-out infinite;
+    margin-left: 4px; /* Play ikonini markazga to'g'rilash */
+}
+
+.gallery-card:hover .video-play-icon {
+    transform: scale(1.1);
+    box-shadow: 0 0 40px rgba(0, 217, 255, 0.6);
+    border-color: rgba(0, 217, 255, 0.8);
+}
+
+/* Video paused holatida pause ikonini ko'rsatish */
+.gallery-card.video-paused .video-play-icon i::before {
+    content: "\f04c"; /* fa-pause */
+}
+
+.gallery-card.video-playing .video-play-icon {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.gallery-card.video-playing:hover .video-play-icon {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 @keyframes pulse {
@@ -378,6 +412,21 @@
     .image-modal-content {
         width: 95%;
     }
+
+    /* Mobil uchun video play ikonini kattalashtirish */
+    .video-play-icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    .video-play-icon i {
+        font-size: 2.5rem;
+    }
+
+    /* Mobil uchun overlay'ni doimiy ko'rinadigan qilish */
+    .video-play-overlay {
+        background: rgba(0, 0, 0, 0.3);
+    }
 }
 
 @media (max-width: 480px) {
@@ -392,6 +441,21 @@
     .gallery-filter-btn {
         width: 100%;
         justify-content: center;
+    }
+
+    /* Kichik ekranlar uchun video play ikonini yanada kattalashtirish */
+    .video-play-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .video-play-icon i {
+        font-size: 2rem;
+    }
+
+    /* Kichik ekranlarda overlay'ni yanada ko'rinadigan qilish */
+    .video-play-overlay {
+        background: rgba(0, 0, 0, 0.4);
     }
 }
 

@@ -57,7 +57,52 @@ function initGalleryItems() {
     const galleryCards = document.querySelectorAll('.gallery-card');
 
     galleryCards.forEach(card => {
-        card.addEventListener('click', function () {
+        // Video elementni topish
+        const video = card.querySelector('video');
+        
+        // Video bo'lsa, play/pause holatini kuzatish
+        if (video) {
+            const playIcon = card.querySelector('.video-play-icon i');
+            
+            // Video o'ynatilganda
+            video.addEventListener('play', () => {
+                card.classList.add('video-playing');
+                card.classList.remove('video-paused');
+                if (playIcon) {
+                    playIcon.classList.remove('fa-play-circle');
+                    playIcon.classList.add('fa-pause-circle');
+                }
+            });
+            
+            // Video to'xtatilganda
+            video.addEventListener('pause', () => {
+                card.classList.add('video-paused');
+                card.classList.remove('video-playing');
+                if (playIcon) {
+                    playIcon.classList.remove('fa-pause-circle');
+                    playIcon.classList.add('fa-play-circle');
+                }
+            });
+            
+            // Video yuklanganda
+            video.addEventListener('loadedmetadata', () => {
+                card.classList.add('video-paused');
+            });
+        }
+
+        // Card'ga bosilganda
+        card.addEventListener('click', function (e) {
+            // Play ikoniga bosilganda video o'ynatish
+            if (video && e.target.closest('.video-play-icon')) {
+                e.stopPropagation();
+                if (video.paused) {
+                    video.play();
+                } else {
+                    video.pause();
+                }
+                return;
+            }
+
             const item = this.closest('.gallery-item');
             const mediaType = item.getAttribute('data-media-type');
             const mediaUrl = item.getAttribute('data-media-url');
