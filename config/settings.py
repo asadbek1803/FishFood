@@ -171,54 +171,45 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'
+# Railway S3 sozlamalari
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'tid_jGtlZSjFnXTBnDAGNJEzVvNRPzLKjLigIqFsNdApjhB_BELGhI')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', 'tsec_u2dpHyeTrCtjV8m7zk_yRvtnvHA3qYUkTKeQTp9o55Nd6mvmqfWr2c58IeU9L-3ppEEKgd')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'organized-holster-w2vrss9')
+AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://storage.railway.app')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'auto')
+# Custom domain default qiymatini to'g'ri sozlash
+_default_bucket = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'organized-holster-w2vrss9')
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN', f'{_default_bucket}.storage.railway.app')
+
+# Virtual-hosted style URLs uchun
+AWS_S3_ADDRESSING_STYLE = 'virtual'
+
+# Object parametrlari
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+# Public access
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = False  # URL'larda signature bo'lmasligi uchun
+
+# Location (media fayllar uchun)
+AWS_LOCATION = 'media'
+
+# Static va Media URL'lar
+STATIC_URL = '/static/'  # Static fayllar hali ham local
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Railway S3 Storage Configuration
-USE_S3 = os.getenv('USE_S3', 'True') == 'True'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+MEDIA_ROOT = ''
 
-if USE_S3:
-    # S3 Storage Settings
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
-    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'auto')
-    AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
-    AWS_DEFAULT_ACL = os.getenv('AWS_DEFAULT_ACL', 'public-read')
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',
-        'ACL': 'public-read',  # Public access uchun ACL
-    }
-    
-    # Railway S3 uchun to'g'ri sozlamalar
-    AWS_LOCATION = 'media'  # S3 bucket ichida media papkasi
-    AWS_QUERYSTRING_AUTH = False
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_S3_VERIFY = True
-    
-    # Railway S3 uchun maxsus sozlamalar
-    AWS_S3_ADDITIONAL_PARAMS = {
-        'ACL': 'public-read',  # Har bir fayl uchun public-read ACL
-    }
-    
-    # Railway S3 endpoint URL format: https://storage.railway.app/bucket-name/media/file.jpg
-    if AWS_S3_ENDPOINT_URL and AWS_STORAGE_BUCKET_NAME:
-        MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/'
-    else:
-        MEDIA_URL = '/media/'
-    
-    MEDIA_ROOT = ''
-    
-    # Media files (rasmlar, videolar) - Railway S3 uchun maxsus backend
-    DEFAULT_FILE_STORAGE = 'config.storage_backends.RailwayS3Storage'
-else:
-    # Local storage (development)
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Storage backends
+DEFAULT_FILE_STORAGE = 'config.storage_backends.RailwayS3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'  # Static uchun hozircha local
 
 # File Upload Settings - Video yuklash uchun optimallashtirilgan
 FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100 MB - memory'da saqlash
