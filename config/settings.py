@@ -191,15 +191,30 @@ if USE_S3:
     AWS_DEFAULT_ACL = os.getenv('AWS_DEFAULT_ACL', 'public-read')
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
+        'ACL': 'public-read',  # Public access uchun ACL
     }
-    AWS_LOCATION = 'media'
+    
+    # Railway S3 uchun to'g'ri sozlamalar
+    AWS_LOCATION = 'media'  # S3 bucket ichida media papkasi
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_FILE_OVERWRITE = False
+    AWS_S3_VERIFY = True
     
-    # Media files (rasmlar, videolar)
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/'
+    # Railway S3 uchun maxsus sozlamalar
+    AWS_S3_ADDITIONAL_PARAMS = {
+        'ACL': 'public-read',  # Har bir fayl uchun public-read ACL
+    }
+    
+    # Railway S3 endpoint URL format: https://storage.railway.app/bucket-name/media/file.jpg
+    if AWS_S3_ENDPOINT_URL and AWS_STORAGE_BUCKET_NAME:
+        MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/'
+    else:
+        MEDIA_URL = '/media/'
+    
     MEDIA_ROOT = ''
+    
+    # Media files (rasmlar, videolar) - Railway S3 uchun maxsus backend
+    DEFAULT_FILE_STORAGE = 'config.storage_backends.RailwayS3Storage'
 else:
     # Local storage (development)
     MEDIA_URL = '/media/'
