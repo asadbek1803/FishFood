@@ -7,5 +7,3 @@ python-dotenv
 django-cors-headers
 gunicorn
 dj_database_url
-django-storages
-boto3

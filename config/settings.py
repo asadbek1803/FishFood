@@ -80,7 +80,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'storages',  # S3 storage support
     'home',
     'store',
     'dashboard',
@@ -171,50 +170,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-# Supabase S3 Storage sozlamalari
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'd62e1581f5f0e23fcb6480d1bfe4e6bc')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '997ea6d98525e85f686bbdecb85f9b4dfbd1302eaaf451fe6eb16ee2d4877e8f')
-# Supabase bucket nomi - Supabase Dashboard'dan oling
-# Bucket nomi: fishfood (Public)
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'fishfood')  # Supabase bucket nomi
-AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3')
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-northeast-1')
-
-# Path-style URLs uchun (Supabase S3 uchun)
-# Path-style: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3/bucket-name/path/to/file
-AWS_S3_ADDRESSING_STYLE = 'path'
-# Custom domain'ni o'chirish, path-style ishlatish uchun
-AWS_S3_CUSTOM_DOMAIN = None
-
-# Object parametrlari
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-    'ACL': 'public-read',  # Har bir fayl uchun majburiy public-read
-}
-
-# Public access
-AWS_DEFAULT_ACL = 'public-read'
-AWS_S3_FILE_OVERWRITE = False
-AWS_QUERYSTRING_AUTH = False  # URL'larda signature bo'lmasligi uchun
-
-# Location (media fayllar uchun) - bo'sh qoldirish, chunki upload_to'da allaqachon path bor
-AWS_LOCATION = ''
-
-# Static va Media URL'lar
-STATIC_URL = '/static/'  # Static fayllar hali ham local
+# Static va Media URL'lar - Local storage
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Supabase public URL format: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/object/public/bucket-name/
-base_storage_url = AWS_S3_ENDPOINT_URL.replace('/storage/v1/s3', '')
-MEDIA_URL = f'{base_storage_url}/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/'
-MEDIA_ROOT = ''
-
-# Storage backends
-DEFAULT_FILE_STORAGE = 'config.storage_backends.RailwayS3Storage'
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'  # Static uchun hozircha local
+# Media files - Local storage
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # File Upload Settings - Video yuklash uchun optimallashtirilgan
 FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100 MB - memory'da saqlash
