@@ -1,5 +1,5 @@
 """
-Management command to fix ACL for existing files in Railway S3
+Management command to fix ACL for existing files in Supabase S3
 Usage: python manage.py fix_s3_acl
 """
 from django.core.management.base import BaseCommand
@@ -10,10 +10,10 @@ from botocore.exceptions import ClientError
 
 
 class Command(BaseCommand):
-    help = 'Fix ACL for all files in Railway S3 bucket to public-read'
+    help = 'Fix ACL for all files in Supabase S3 bucket to public-read'
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('Starting ACL fix for Railway S3...'))
+        self.stdout.write(self.style.SUCCESS('Starting ACL fix for Supabase S3...'))
         
         # S3 client yaratish
         s3_client = boto3.client(
@@ -82,7 +82,7 @@ class Command(BaseCommand):
             except ClientError as e:
                 self.stdout.write(self.style.WARNING(
                     f'⚠ Could not set bucket policy: {e}\n'
-                    'You may need to set it manually in Railway dashboard.'
+                    'You may need to set it manually in Supabase dashboard.'
                 ))
                 
         except ClientError as e:

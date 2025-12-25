@@ -1,6 +1,6 @@
 """
-Railway S3 Storage Backend
-Railway S3 uchun maxsus storage backend
+Supabase S3 Storage Backend
+Supabase S3 uchun maxsus storage backend
 """
 import os
 from storages.backends.s3boto3 import S3Boto3Storage
@@ -22,7 +22,7 @@ class RailwayS3Storage(S3Boto3Storage):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Railway S3 endpoint URL ni to'g'ri sozlash
+        # Supabase S3 endpoint URL ni to'g'ri sozlash
         self.endpoint_url = getattr(settings, 'AWS_S3_ENDPOINT_URL', None)
         self.bucket_name = getattr(settings, 'AWS_STORAGE_BUCKET_NAME', None)
     
@@ -35,7 +35,7 @@ class RailwayS3Storage(S3Boto3Storage):
     def _save(self, name, content):
         """
         Faylni saqlash va ACL'ni to'g'ri sozlash
-        Railway S3'da public access uchun ACL'ni to'g'ri o'rnatish
+        Supabase S3'da public access uchun ACL'ni to'g'ri o'rnatish
         """
         # Name'ni normalize qilish
         name = self._normalize_name(name)
