@@ -10,10 +10,10 @@ from urllib.parse import urljoin
 
 class RailwayS3Storage(S3Boto3Storage):
     """
-    Railway S3 Storage Backend
-    Railway S3'ning S3-compatible API'si bilan ishlash uchun
+    Supabase S3 Storage Backend
+    Supabase S3'ning S3-compatible API'si bilan ishlash uchun
     
-    Railway S3 URL format: https://storage.railway.app/bucket-name/path/to/file
+    Supabase S3 URL format: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3/bucket-name/path/to/file
     """
     location = 'media'
     default_acl = 'public-read'
@@ -86,13 +86,13 @@ class RailwayS3Storage(S3Boto3Storage):
     
     def url(self, name):
         """
-        Railway S3 uchun to'g'ri URL generatsiya qilish
-        Path-style: https://storage.railway.app/bucket-name/media/file.jpg
+        Supabase S3 uchun to'g'ri URL generatsiya qilish
+        Path-style: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3/bucket-name/media/file.jpg
         """
         # Name'ni normalize qilish
         name = self._normalize_name(name)
         
-        # Path-style URL generatsiya qilish (Railway S3 uchun)
+        # Path-style URL generatsiya qilish (Supabase S3 uchun)
         if self.endpoint_url and self.bucket_name:
             # Location va name'ni birlashtirish
             if self.location:
@@ -103,7 +103,8 @@ class RailwayS3Storage(S3Boto3Storage):
             else:
                 file_path = name
             
-            # Path-style URL: endpoint/bucket/path
+            # Supabase S3 URL format: endpoint/bucket/path
+            # Endpoint allaqachon /storage/v1/s3 ni o'z ichiga oladi
             url = f'{self.endpoint_url.rstrip("/")}/{self.bucket_name}/{file_path}'
             return url
         

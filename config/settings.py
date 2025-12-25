@@ -171,15 +171,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-# Railway S3 sozlamalari
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'tid_jGtlZSjFnXTBnDAGNJEzVvNRPzLKjLigIqFsNdApjhB_BELGhI')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', 'tsec_u2dpHyeTrCtjV8m7zk_yRvtnvHA3qYUkTKeQTp9o55Nd6mvmqfWr2c58IeU9L-3ppEEKgd')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'organized-holster-w2vrss9')
-AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://storage.railway.app')
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'auto')
+# Supabase S3 Storage sozlamalari
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'd62e1581f5f0e23fcb6480d1bfe4e6bc')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '997ea6d98525e85f686bbdecb85f9b4dfbd1302eaaf451fe6eb16ee2d4877e8f')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'media')  # Supabase bucket nomi
+AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-northeast-1')
 
-# Path-style URLs uchun (Railway S3 uchun yaxshiroq)
-# Path-style: https://storage.railway.app/bucket-name/path/to/file
+# Path-style URLs uchun (Supabase S3 uchun)
+# Path-style: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3/bucket-name/path/to/file
 AWS_S3_ADDRESSING_STYLE = 'path'
 # Custom domain'ni o'chirish, path-style ishlatish uchun
 AWS_S3_CUSTOM_DOMAIN = None
@@ -205,7 +205,7 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Path-style URL: https://storage.railway.app/bucket-name/media/
+# Path-style URL: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3/bucket-name/media/
 MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/'
 MEDIA_ROOT = ''
 
