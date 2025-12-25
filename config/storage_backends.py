@@ -13,9 +13,9 @@ class RailwayS3Storage(S3Boto3Storage):
     Supabase S3 Storage Backend
     Supabase S3'ning S3-compatible API'si bilan ishlash uchun
     
-    Supabase S3 URL format: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3/bucket-name/path/to/file
+    Supabase public URL format: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/object/public/bucket-name/path/to/file
     """
-    location = 'media'
+    location = ''  # Bo'sh qoldirish, chunki upload_to'da allaqachon path bor
     default_acl = 'public-read'
     file_overwrite = False
     querystring_auth = False
@@ -86,28 +86,25 @@ class RailwayS3Storage(S3Boto3Storage):
     
     def url(self, name):
         """
-        Supabase S3 uchun to'g'ri URL generatsiya qilish
-        Path-style: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3/bucket-name/media/file.jpg
+        Supabase S3 uchun to'g'ri public URL generatsiya qilish
+        Supabase public URL format: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/object/public/bucket-name/path/to/file.jpg
         """
         # Name'ni normalize qilish
         name = self._normalize_name(name)
         
-        # Path-style URL generatsiya qilish (Supabase S3 uchun)
+        # Supabase public URL format ishlatish (signature kerak emas)
         if self.endpoint_url and self.bucket_name:
-            # Location va name'ni birlashtirish
-            if self.location:
-                if name.startswith(self.location):
-                    file_path = name
-                else:
-                    file_path = f'{self.location}/{name}'
-            else:
-                file_path = name
+            # Endpoint'dan base URL ni olish
+            # Endpoint: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3
+            # Base URL: https://xikvlxlkhysjfarzonsa.storage.supabase.co
+            base_url = self.endpoint_url.replace('/storage/v1/s3', '')
             
-            # Supabase S3 URL format: endpoint/bucket/path
-            # Endpoint allaqachon /storage/v1/s3 ni o'z ichiga oladi
-            url = f'{self.endpoint_url.rstrip("/")}/{self.bucket_name}/{file_path}'
+            # File path - location'ni qo'shmaslik, chunki upload_to'da allaqachon bor
+            file_path = name
+            
+            # Supabase public URL format: base_url/storage/v1/object/public/bucket/path
+            url = f'{base_url}/storage/v1/object/public/{self.bucket_name}/{file_path}'
             return url
         
         # Agar sozlamalar bo'lmasa, odatiy S3 URL ishlatish
         return super().url(name)
-

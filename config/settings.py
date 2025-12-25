@@ -195,8 +195,8 @@ AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_FILE_OVERWRITE = False
 AWS_QUERYSTRING_AUTH = False  # URL'larda signature bo'lmasligi uchun
 
-# Location (media fayllar uchun)
-AWS_LOCATION = 'media'
+# Location (media fayllar uchun) - bo'sh qoldirish, chunki upload_to'da allaqachon path bor
+AWS_LOCATION = ''
 
 # Static va Media URL'lar
 STATIC_URL = '/static/'  # Static fayllar hali ham local
@@ -205,8 +205,9 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Path-style URL: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3/bucket-name/media/
-MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/'
+# Supabase public URL format: https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/object/public/bucket-name/
+base_storage_url = AWS_S3_ENDPOINT_URL.replace('/storage/v1/s3', '')
+MEDIA_URL = f'{base_storage_url}/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/'
 MEDIA_ROOT = ''
 
 # Storage backends
