@@ -65,19 +65,14 @@ class RailwayS3Storage(S3Boto3Storage):
     def url(self, name):
         """
         Railway S3 uchun to'g'ri URL generatsiya qilish
-        Virtual-hosted style: https://bucket-name.storage.railway.app/media/file.jpg
+        Path-style: https://storage.railway.app/bucket-name/media/file.jpg
         """
-        # Custom domain bo'lsa, virtual-hosted style URL ishlatish
-        custom_domain = getattr(settings, 'AWS_S3_CUSTOM_DOMAIN', None)
-        if custom_domain:
-            # Virtual-hosted style URL
-            name = self._normalize_name(name)
-            url = f'https://{custom_domain}/{name}'
-            return url
+        # Name'ni normalize qilish
+        name = self._normalize_name(name)
         
-        # Agar custom domain bo'lmasa, endpoint URL format
+        # Path-style URL generatsiya qilish (Railway S3 uchun)
         if self.endpoint_url and self.bucket_name:
-            name = self._normalize_name(name)
+            # Location va name'ni birlashtirish
             if self.location:
                 if name.startswith(self.location):
                     file_path = name
@@ -85,6 +80,8 @@ class RailwayS3Storage(S3Boto3Storage):
                     file_path = f'{self.location}/{name}'
             else:
                 file_path = name
+            
+            # Path-style URL: endpoint/bucket/path
             url = f'{self.endpoint_url.rstrip("/")}/{self.bucket_name}/{file_path}'
             return url
         

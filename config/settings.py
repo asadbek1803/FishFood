@@ -177,12 +177,12 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', 'tsec_u2dpHyeTrC
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'organized-holster-w2vrss9')
 AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://storage.railway.app')
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'auto')
-# Custom domain default qiymatini to'g'ri sozlash
-_default_bucket = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'organized-holster-w2vrss9')
-AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN', f'{_default_bucket}.storage.railway.app')
 
-# Virtual-hosted style URLs uchun
-AWS_S3_ADDRESSING_STYLE = 'virtual'
+# Path-style URLs uchun (Railway S3 uchun yaxshiroq)
+# Path-style: https://storage.railway.app/bucket-name/path/to/file
+AWS_S3_ADDRESSING_STYLE = 'path'
+# Custom domain'ni o'chirish, path-style ishlatish uchun
+AWS_S3_CUSTOM_DOMAIN = None
 
 # Object parametrlari
 AWS_S3_OBJECT_PARAMETERS = {
@@ -204,7 +204,8 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# Path-style URL: https://storage.railway.app/bucket-name/media/
+MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/'
 MEDIA_ROOT = ''
 
 # Storage backends
