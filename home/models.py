@@ -235,3 +235,176 @@ class Gallery(BaseModel):
         elif self.media_type == 'video':
             return None  # Video thumbnail uchun alohida yechim kerak
         return None
+
+######################## SEO Metadata Model ########################
+class SEOMetadata(BaseModel):
+    PAGE_CHOICES = [
+        ('home', 'Bosh sahifa'),
+        ('about', 'Biz haqimizda'),
+        ('gallery', 'Galereya'),
+        ('shop', 'Mahsulotlar'),
+        ('contact', 'Aloqa'),
+    ]
+    
+    ROBOTS_CHOICES = [
+        ('index, follow', 'Index va Follow'),
+        ('index, nofollow', 'Index, no Follow'),
+        ('noindex, follow', 'No Index, Follow'),
+        ('noindex, nofollow', 'No Index, no Follow'),
+    ]
+    
+    page = models.CharField(
+        max_length=50,
+        choices=PAGE_CHOICES,
+        unique=True,
+        verbose_name="Sahifa",
+        help_text="Qaysi sahifa uchun SEO sozlamalar"
+    )
+    
+    # Asosiy SEO
+    meta_title = models.CharField(
+        max_length=70,
+        verbose_name="Meta Title",
+        help_text="Sarlavha (maksimal 70 ta belgi). Qidiruv natijalarida ko'rinadi."
+    )
+    
+    meta_description = models.TextField(
+        max_length=160,
+        verbose_name="Meta Description",
+        help_text="Tavsif (maksimal 160 ta belgi). Qidiruv natijalarida ko'rinadi."
+    )
+    
+    meta_keywords = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Meta Keywords",
+        help_text="Kalit so'zlar (vergul bilan ajratilgan). Masalan: baliq, dengiz mahsulotlari, ikra"
+    )
+    
+    # Robots Meta
+    robots_meta = models.CharField(
+        max_length=30,
+        choices=ROBOTS_CHOICES,
+        default='index, follow',
+        verbose_name="Robots Meta",
+        help_text="Qidiruv tizimlariga qanday ko'rsatma berish kerak"
+    )
+    
+    # Canonical URL
+    canonical_url = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Canonical URL",
+        help_text="Agar bo'sh bo'lsa, avtomatik URL ishlatiladi"
+    )
+    
+    # Open Graph (Facebook, LinkedIn)
+    og_title = models.CharField(
+        max_length=70,
+        blank=True,
+        null=True,
+        verbose_name="OG Title",
+        help_text="Ijtimoiy tarmoqlarda ko'rinadigan sarlavha"
+    )
+    
+    og_description = models.TextField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name="OG Description",
+        help_text="Ijtimoiy tarmoqlarda ko'rinadigan tavsif"
+    )
+    
+    og_image = models.ImageField(
+        upload_to='seo/og_images/',
+        blank=True,
+        null=True,
+        verbose_name="OG Image",
+        help_text="Ijtimoiy tarmoqlarda ko'rinadigan rasm (1200x630px tavsiya qilinadi)"
+    )
+    
+    og_type = models.CharField(
+        max_length=50,
+        default='website',
+        verbose_name="OG Type",
+        help_text="Masalan: website, article, product"
+    )
+    
+    # Twitter Card
+    twitter_card = models.CharField(
+        max_length=20,
+        choices=[
+            ('summary', 'Summary'),
+            ('summary_large_image', 'Summary Large Image'),
+        ],
+        default='summary_large_image',
+        verbose_name="Twitter Card Type"
+    )
+    
+    twitter_title = models.CharField(
+        max_length=70,
+        blank=True,
+        null=True,
+        verbose_name="Twitter Title"
+    )
+    
+    twitter_description = models.TextField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name="Twitter Description"
+    )
+    
+    twitter_image = models.ImageField(
+        upload_to='seo/twitter_images/',
+        blank=True,
+        null=True,
+        verbose_name="Twitter Image",
+        help_text="Twitter'da ko'rinadigan rasm (1200x675px tavsiya qilinadi)"
+    )
+    
+    # Structured Data (JSON-LD) - AI uchun
+    structured_data = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name="Structured Data (JSON-LD)",
+        help_text="Schema.org strukturali ma'lumotlar (AI va qidiruv tizimlari uchun)"
+    )
+    
+    # Schema.org type
+    schema_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Schema.org Type",
+        help_text="Masalan: Organization, Product, Article, WebSite"
+    )
+    
+    class Meta:
+        verbose_name = 'SEO Metadata'
+        verbose_name_plural = 'SEO Metadata'
+        ordering = ['page']
+    
+    def __str__(self):
+        return f"SEO: {self.get_page_display()}"
+    
+    def get_canonical_url(self, request=None):
+        """Canonical URL ni qaytaradi"""
+        if self.canonical_url:
+            return self.canonical_url
+        if request:
+            return request.build_absolute_uri(request.path)
+        return ''
+    
+    def get_og_image_url(self):
+        """OG Image URL ni qaytaradi"""
+        if self.og_image:
+            return self.og_image.url
+        return ''
+    
+    def get_twitter_image_url(self):
+        """Twitter Image URL ni qaytaradi"""
+        if self.twitter_image:
+            return self.twitter_image.url
+        return self.get_og_image_url()  # Agar bo'sh bo'lsa, OG image ishlatiladi

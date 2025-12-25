@@ -6,6 +6,6 @@ psycopg2-binary
 python-dotenv
 django-cors-headers
 gunicorn
-cloudinary
-django-cloudinary-storage
 dj_database_url
+django-storages
+boto3

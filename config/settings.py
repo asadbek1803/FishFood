@@ -13,12 +13,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from django.urls import reverse_lazy
-import cloudinary
 
-
-# Cloudinary sozlamalari - katta video fayllar uchun optimallashtirilgan
-# Cloudinary katta fayllar uchun avtomatik chunked upload qiladi
-cloudinary.config(secure=True)
 load_dotenv()  # Load environment variables from .env file
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,8 +80,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'cloudinary',
-    'cloudinary_storage',
+    'storages',  # S3 storage support
     'home',
     'store',
     'dashboard',
@@ -115,6 +109,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'home.context_processors.site_settings',
+                'home.context_processors.seo_metadata',
             ],
         },
     },
@@ -182,8 +177,33 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-MEDIA_URL = 'media/'
+# Railway S3 Storage Configuration
+USE_S3 = os.getenv('USE_S3', 'True') == 'True'
+
+if USE_S3:
+    # S3 Storage Settings
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
+    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'auto')
+    AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
+    AWS_DEFAULT_ACL = os.getenv('AWS_DEFAULT_ACL', 'public-read')
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_LOCATION = 'media'
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_FILE_OVERWRITE = False
+    
+    # Media files (rasmlar, videolar)
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/'
+    MEDIA_ROOT = ''
+else:
+    # Local storage (development)
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # File Upload Settings - Video yuklash uchun optimallashtirilgan
 FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100 MB - memory'da saqlash

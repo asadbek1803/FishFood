@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from .models import (
     HomeSlider, Service, Testimonial, SiteSetting,
     AboutUs, AboutUsMissons, AboutUsValues, AboutUsStats,
-    AboutUsTeam, AboutUsQuestions, Gallery
+    AboutUsTeam, AboutUsQuestions, Gallery, SEOMetadata
 )
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
 
@@ -504,4 +504,98 @@ class GalleryAdmin(UnfoldModelAdmin):
                 'accept': 'video/*',
                 'data-max-size': '500MB'  # Frontend validation uchun
             })
+        return form
+
+
+# ==================== SEO METADATA ADMIN ====================
+@admin.register(SEOMetadata)
+class SEOMetadataAdmin(UnfoldModelAdmin):
+    list_display = ('page', 'meta_title', 'robots_meta', 'is_active', 'updated_at')
+    list_display_links = ('page',)
+    list_filter = ('is_active', 'page', 'robots_meta', 'created_at', 'updated_at')
+    search_fields = ('meta_title', 'meta_description', 'meta_keywords', 'og_title')
+    list_per_page = 20
+    ordering = ('page',)
+    
+    readonly_fields = ('created_at', 'updated_at', 'preview_meta', 'preview_og_image')
+    
+    fieldsets = (
+        ('Asosiy Sozlamalar', {
+            'fields': ('page', 'is_active'),
+            'description': 'Qaysi sahifa uchun SEO sozlamalarini tanlang'
+        }),
+        ('Asosiy SEO', {
+            'fields': ('meta_title', 'meta_description', 'meta_keywords', 'robots_meta', 'canonical_url'),
+            'description': 'Qidiruv tizimlari uchun asosiy metadata'
+        }),
+        ('Open Graph (Facebook, LinkedIn)', {
+            'fields': ('og_title', 'og_description', 'og_image', 'og_type', 'preview_og_image'),
+            'description': 'Ijtimoiy tarmoqlarda ulashganda ko\'rinadigan ma\'lumotlar'
+        }),
+        ('Twitter Card', {
+            'fields': ('twitter_card', 'twitter_title', 'twitter_description', 'twitter_image'),
+            'description': 'Twitter\'da ulashganda ko\'rinadigan ma\'lumotlar'
+        }),
+        ('Structured Data (AI & Search Engines)', {
+            'fields': ('schema_type', 'structured_data'),
+            'description': 'Sun\'iy intelekt va qidiruv tizimlari uchun strukturali ma\'lumotlar (JSON-LD)',
+            'classes': ('collapse',)
+        }),
+        ('Vaqt yorliqlari', {
+            'fields': ('created_at', 'updated_at', 'preview_meta'),
+            'classes': ('collapse',)
+        })
+    )
+    
+    def preview_meta(self, obj):
+        """SEO metadata ko'rinishini ko'rsatish"""
+        if not obj.pk:
+            return mark_safe('<p style="color:#999;">Ma\'lumotlarni saqlang</p>')
+        
+        preview_html = f"""
+        <div style="background:#f8f9fa;padding:15px;border-radius:8px;border-left:4px solid #007bff;margin:10px 0;">
+            <h4 style="margin-top:0;color:#333;">SEO Preview:</h4>
+            <div style="margin-bottom:10px;">
+                <strong style="color:#007bff;font-size:16px;">{obj.meta_title or '—'}</strong>
+            </div>
+            <div style="color:#666;font-size:14px;margin-bottom:10px;">
+                {obj.meta_description or '—'}
+            </div>
+            <div style="color:#999;font-size:12px;">
+                Keywords: {obj.meta_keywords or '—'} | Robots: {obj.get_robots_meta_display()}
+            </div>
+        </div>
+        """
+        return mark_safe(preview_html)
+    preview_meta.short_description = 'SEO Ko\'rinishi'
+    
+    def preview_og_image(self, obj):
+        """OG Image ko'rinishini ko'rsatish"""
+        if obj.og_image:
+            return format_html(
+                '<img src="{}" style="max-width:400px;border-radius:8px;margin:10px 0;" />',
+                obj.og_image.url
+            )
+        return mark_safe('<span style="color:#999;">OG Image yuklanmagan</span>')
+    preview_og_image.short_description = 'OG Image Ko\'rinishi'
+    
+    def get_form(self, request, obj=None, **kwargs):
+        """Form fieldlarga yordamchi ma'lumotlar qo'shish"""
+        form = super().get_form(request, obj, **kwargs)
+        
+        # Meta title uchun character counter
+        if 'meta_title' in form.base_fields:
+            form.base_fields['meta_title'].widget.attrs.update({
+                'maxlength': '70',
+                'placeholder': 'Maksimal 70 ta belgi'
+            })
+        
+        # Meta description uchun character counter
+        if 'meta_description' in form.base_fields:
+            form.base_fields['meta_description'].widget.attrs.update({
+                'maxlength': '160',
+                'rows': '3',
+                'placeholder': 'Maksimal 160 ta belgi'
+            })
+        
         return form
