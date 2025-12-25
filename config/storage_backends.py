@@ -46,19 +46,41 @@ class RailwayS3Storage(S3Boto3Storage):
         if not content_type:
             content_type = 'application/octet-stream'
         
-        # ExtraArgs parametrlari
+        # ExtraArgs parametrlari - ACL'ni majburiy o'rnatish
         extra_args = {
-            'ACL': self.default_acl or 'public-read',
+            'ACL': 'public-read',  # Majburiy public-read
             'ContentType': content_type,
         }
         
-        # Object parameters ni qo'shish
+        # Object parameters ni qo'shish (lekin ACL'ni override qilish)
         if hasattr(settings, 'AWS_S3_OBJECT_PARAMETERS'):
-            extra_args.update(settings.AWS_S3_OBJECT_PARAMETERS)
+            params = settings.AWS_S3_OBJECT_PARAMETERS.copy()
+            # ACL'ni saqlash
+            if 'ACL' in params:
+                extra_args['ACL'] = params['ACL']
+            # Boshqa parametrlarni qo'shish
+            for key, value in params.items():
+                if key != 'ACL':
+                    extra_args[key] = value
         
         # Boto3 orqali yuklash
         obj = self.bucket.Object(name)
         obj.upload_fileobj(content, ExtraArgs=extra_args)
+        
+        # ACL'ni yana bir marta tekshirish va o'rnatish (agar kerak bo'lsa)
+        try:
+            current_acl = obj.Acl().grants
+            # Agar public-read bo'lmasa, o'rnatish
+            has_public_read = any(
+                grant.get('Grantee', {}).get('URI') == 'http://acs.amazonaws.com/groups/global/AllUsers'
+                for grant in current_acl
+            )
+            if not has_public_read:
+                obj.Acl().put(ACL='public-read')
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Could not verify/set ACL for {name}: {e}")
         
         return name
     

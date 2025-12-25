@@ -187,6 +187,7 @@ AWS_S3_CUSTOM_DOMAIN = None
 # Object parametrlari
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
+    'ACL': 'public-read',  # Har bir fayl uchun majburiy public-read
 }
 
 # Public access
