@@ -174,7 +174,9 @@ USE_TZ = True
 # Supabase S3 Storage sozlamalari
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'd62e1581f5f0e23fcb6480d1bfe4e6bc')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '997ea6d98525e85f686bbdecb85f9b4dfbd1302eaaf451fe6eb16ee2d4877e8f')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'media')  # Supabase bucket nomi
+# Supabase bucket nomi - Supabase Dashboard'dan oling
+# Bucket nomi: fishfood (Public)
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'fishfood')  # Supabase bucket nomi
 AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://xikvlxlkhysjfarzonsa.storage.supabase.co/storage/v1/s3')
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-northeast-1')
 
