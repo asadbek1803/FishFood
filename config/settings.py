@@ -179,7 +179,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Media files - Local storage
 MEDIA_URL = '/media/'
+# BASE_DIR Railway'da /app bo'ladi, shuning uchun MEDIA_ROOT = /app/media bo'ladi
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Agar papka mavjud bo'lmasa, yaratish
+os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 # File Upload Settings - Video yuklash uchun optimallashtirilgan
 FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100 MB - memory'da saqlash

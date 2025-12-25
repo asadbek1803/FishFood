@@ -16,12 +16,12 @@ urlpatterns = [
 ]  
 
 # Static va Media files serving
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-else:
-    # Production uchun ham media files serving (Railway uchun)
-    # /app/ path'ni olib tashlash uchun to'g'ridan-to'g'ri serve qilamiz
+# DEBUG va production uchun ham media files serving
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Production'da qo'shimcha serve (Railway uchun)
+if not settings.DEBUG:
     urlpatterns += [
         re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
         re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
