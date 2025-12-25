@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
     <!-- SEO Meta Tags -->
-    <title>{% block meta_title %}{% if meta_title %}{{ meta_title }}{% else %}{% block title %}FishFood 2025 - Premium Seafood{% endblock %}{% endif %}{% endblock %}</title>
+    <title>{% block title %}{% if meta_title %}{{ meta_title }}{% else %}FishFood 2025 - Premium Seafood{% endif %}{% endblock %}</title>
     
     {% if meta_description %}
     <meta name="description" content="{{ meta_description }}">
@@ -39,7 +39,9 @@
     {% if og_title %}
     <meta property="og:title" content="{{ og_title }}">
     {% else %}
-    <meta property="og:title" content="{% block title %}FishFood 2025 - Premium Seafood{% endblock %}">
+    {% block og_title_default %}
+    <meta property="og:title" content="{% if meta_title %}{{ meta_title }}{% else %}FishFood 2025 - Premium Seafood{% endif %}">
+    {% endblock %}
     {% endif %}
     {% if og_description %}
     <meta property="og:description" content="{{ og_description }}">
